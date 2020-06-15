@@ -1,0 +1,6 @@
+.example-box {
+  position: absolute;
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.87);
+  border: dashed grey 1px;
+}

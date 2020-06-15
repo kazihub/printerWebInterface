@@ -1,0 +1,18 @@
+<nz-card nzTitle="IMAGE EDITOR">
+  <nz-form-item>
+    <nz-form-control style="text-align: center !important;">
+      <nz-form-label>Preview</nz-form-label>
+      <img [src]="src" style="width:100%; height: 200px; display: block; margin-left: auto; margin-right: auto" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <input type="file" (change)="onFileChange($event)" #photo nz-input hidden>
+      <button nz-button (click)="photo.click()" nzType="primary" class="m-r-10">Select Image</button>
+    </nz-form-control>
+    <div class="m-t-20">
+      <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
+      <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>
+    </div>
+  </nz-form-item>
+</nz-card>

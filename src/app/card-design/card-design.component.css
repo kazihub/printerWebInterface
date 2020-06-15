@@ -1,0 +1,41 @@
+.example-boundary {
+  width: 100%;
+  height: 460px;
+  border: dotted #ccc 2px;
+  border-radius: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  z-index: 2;
+}
+
+.grid-lines{
+  position: relative;
+  border: dashed grey 1px;
+  z-index: 1;
+  /*background-image:linear-gradient(0deg,*/
+  /*transparent 24%,*/
+  /*#000000 25%,*/
+  /*#000000 26%,*/
+  /*transparent 27%,*/
+  /*transparent 74%,*/
+  /*#000000 75%,*/
+  /*#000000 76%, transparent 77%, transparent),*/
+  /*linear-gradient(90deg,*/
+  /*  transparent 24%,*/
+  /*  #000000 25%,*/
+  /*  #000000 26%,*/
+  /*  transparent 27%,*/
+  /*  transparent 74%,*/
+  /*  #000000 75%,*/
+  /*  #000000 76%,*/
+  /*  transparent 77%,*/
+  /*  transparent);*/
+  /*background-size:50px 50px;*/
+}
+
+.grid-bg{
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}

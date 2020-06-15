@@ -1,0 +1,51 @@
+@import url('./assets/lib/hljs/styles/atom-one-light.css');
+@import url('../node_modules/ng-zorro-antd/src/ng-zorro-antd.min.css');
+@import url('../node_modules/@fortawesome/fontawesome-free/css/all.min.css');
+@import './assets/scss/app.scss';
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+mwlResizable{
+  box-sizing: border-box;
+}
+
+.example-box:active {
+  border: dotted #3e3e3e 2px;
+}
+
+.example-box button{
+  display: block;
+  position: absolute;
+}
+
+.example-box:hover{
+  border: dotted #3e3e3e 2px;
+}
+
+.example-handle {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #8e8e8e;
+  cursor: move;
+  width: 24px;
+  height: 24px;
+}
+
+.close-handle {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  color: red;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
+
+.example-box:hover div{
+  display: block;
+}
+
+.example-box div{
+  display: none;
+}

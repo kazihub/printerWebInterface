@@ -1,0 +1,46 @@
+<nz-card nzTitle="TEXT EDITOR">
+  <nz-form-item>
+    <nz-form-control style="text-align: center !important;">
+      <nz-form-label>Preview</nz-form-label>
+      <h1 class="example-box" [ngStyle]="
+    {
+    'font-size': fontSize+'px',
+    'font-weight': fontWeight,
+     'font-style': fontStyle,
+     'text-decoration': decorate ? 'underline' : 'none'
+     }" cdkDrag>
+        {{text}}
+      </h1>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label>Text</nz-form-label>
+      <input nz-input [(ngModel)]="text" type="text">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label>Font Size</nz-form-label>
+      <input nz-input [(ngModel)]="fontSize"  type="number">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Font Weight</nz-form-label>
+    <nz-select style="width: 100%" placeholder="Font Weight" [(ngModel)]="fontWeight">
+      <nz-option *ngFor="let item of weight" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Font Style</nz-form-label>
+    <nz-select style="width: 100%" placeholder="Font Style" [(ngModel)]="fontStyle">
+      <nz-option *ngFor="let item of style" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Underline ?</nz-form-label>
+    <nz-switch [(ngModel)]="decorate"></nz-switch>
+  </nz-form-item>
+  <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
+  <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>
+</nz-card>
