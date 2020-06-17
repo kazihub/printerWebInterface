@@ -21,6 +21,7 @@ import {ResizableModule} from 'angular-resizable-element';
 import {NzMessageModule, NzNotificationModule} from 'ng-zorro-antd';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpinterceptorService} from './utilities/httpinterceptor.service';
+import {NgxBarcode6Module} from 'ngx-barcode6';
 
 registerLocaleData(en);
 
@@ -40,7 +41,8 @@ registerLocaleData(en);
     NgChartjsModule,
     ResizableModule,
     NzNotificationModule,
-    NzMessageModule
+    NzMessageModule,
+    NgxBarcode6Module
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpinterceptorService, multi: true },

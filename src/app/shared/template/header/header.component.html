@@ -26,7 +26,7 @@
     </ul>
     <ul class="nav-right">
       <li>
-        <span class="p-h-10 pointer" nz-dropdown [nzDropdownMenu]="profile" [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
+        <span class="p-h-10 pointer" nz-dropdown [nzDropdownMenu]="profile" [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" [nzBackdrop]="false">
                     <nz-avatar [nzIcon]="'user'" nzSrc="assets/images/avatars/thumb-3.jpg"></nz-avatar>
                 </span>
         <nz-dropdown-menu #profile="nzDropdownMenu">
@@ -41,7 +41,7 @@
               </div>
             </li>
             <li nz-menu-item>
-              <a class="p-v-5 d-flex align-items-center justify-content-between">
+              <a class="p-v-5 d-flex align-items-center justify-content-between" (click)="logout()">
                 <div>
                   <i class="opacity-04 font-size-16" nz-icon nzType="logout" theme="outline"></i>
                   <span class="m-l-10">Logout</span>

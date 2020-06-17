@@ -13,11 +13,27 @@ export class AppService {
   ) { }
 
   save(info): any {
-    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplate', info);
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplateData', info);
   }
 
   get(): any {
+    return this.httpClient.get(this.baseService.getBaseUrl() + 'App/GetTemplateData');
+  }
+
+  saveTemplate(info): any {
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplate', info);
+  }
+
+  getTemplate(): any {
     return this.httpClient.get(this.baseService.getBaseUrl() + 'App/GetTemplate');
+  }
+
+  SaveTemplateFields(info): any {
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplateFields', info);
+  }
+
+  search(info): any {
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
   }
 
 

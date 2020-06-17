@@ -1,11 +1,20 @@
+<div class="page-header">
+  <h1>{{templatename}} Template
+  </h1>
+</div>
 <nz-spin [nzSpinning]="loading">
   <div class="container-fluid">
-    <div class="row">
+    <div class="row m-t-40">
       <div class="col">
         <nz-button-group>
-          <button nz-button nzType="primary" (click)="photo.click()">
-            <i nz-icon nzType="folder" nzTheme="outline"></i>
+          <button nz-button nzType="primary" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" [nzBackdrop]="false">
+            <i nz-icon [nzType]="'form'" nzTheme="outline"></i>
           </button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item (click)="openTemplate()">New Template</li>
+            </ul>
+          </nz-dropdown-menu>
           <ng-container *ngFor="let control of mainControls">
             <ng-container *ngIf="control.handle === false">
               <button nz-button printSectionId="printsection" ngxPrint [useExistingCss]="true" nzType="primary" [disabled]="!printimage">
@@ -13,9 +22,16 @@
               </button>
             </ng-container>
             <ng-container *ngIf="control.handle !== false">
-              <button nz-button (click)="control.handle()" nzType="primary">
-                <i nz-icon [nzType]="control.icon" nzTheme="outline"></i>
-              </button>
+             <ng-container *ngIf="control.hasElement">
+               <button nz-button (click)="control.handle(photo)" nzType="primary" [disabled]="control.disabled">
+                 <i nz-icon [nzType]="control.icon" nzTheme="outline"></i>
+               </button>
+             </ng-container>
+              <ng-container *ngIf="!control.hasElement">
+                <button nz-button (click)="control.handle()" nzType="primary" [disabled]="control.disabled">
+                  <i nz-icon [nzType]="control.icon" nzTheme="outline"></i>
+                </button>
+              </ng-container>
             </ng-container>
           </ng-container>
           <button nz-button [disabled]="list.length === 0" nzType="primary" (click)="printStuff()">
@@ -25,24 +41,20 @@
         <input type="file" (change)="onFileChange($event)" #photo nz-input hidden>
         <nz-button-group class="m-l-20">
           <button nz-button *ngFor="let controls of textControls" (click)="controls.handle()" [disabled]="controls.disabled" nzType="primary">
-            <i nz-icon [nzType]="controls.icon" nzTheme="outline"></i>
+            <ng-container *ngIf="controls.hasIcon">
+              <i nz-icon [nzType]="controls.icon" nzTheme="outline"></i>
+            </ng-container>
+            <ng-container *ngIf="!controls.hasIcon">
+              <span>{{controls.text}}</span>
+            </ng-container>
           </button>
         </nz-button-group>
         <nz-button-group class="m-l-20">
-          <button nz-button nzType="default">
-            <span>x: {{xposition}}</span>
+          <button nz-button [disabled]="true" nzType="default">
+            <span>X: {{xposition}}</span>
           </button>
-          <button nz-button nzType="default">
+          <button nz-button [disabled]="true" nzType="default">
             <span>y: {{yposition}}</span>
-          </button>
-          <button nz-button nzType="primary" [disabled]="!edit" (click)="disableEditing()">
-            <i nz-icon nzType="stop" nzTheme="outline"></i>
-          </button>
-          <button nz-button nzType="primary" [disabled]="edit" (click)="enableEditing()">
-            <i nz-icon nzType="edit" nzTheme="outline"></i>
-          </button>
-          <button nz-button nzType="primary" (click)="saveTemp()" >
-            <i nz-icon nzType="save" nzTheme="outline"></i>
           </button>
         </nz-button-group>
       </div>
@@ -52,12 +64,11 @@
         <div class="row">
           <div class="col-12">
             <nz-spin [nzSpinning]="processing">
-              <div style="position: absolute; top: 0; bottom: 0; left: 0;right: 0; z-index: 900; display: none" id="disableOverlay"></div>
+              <div style="position: absolute; top: 0; bottom: 0; left: 0;right: 0; z-index: 900;" [ngStyle]="{'display': edit? 'none':'block'}" id="disableOverlay"></div>
               <div [ngStyle]="{'background-image': 'url('+bgimage+')'}" class="grid-bg">
                 <div class="grid-lines">
                   <div class="example-boundary grid-lines" id="printsection">
                     <template #textcontainer></template>
-                    <template #imagecontainer></template>
                   </div>
                 </div>
               </div>
@@ -74,6 +85,26 @@
         <template #setupcontainer></template>
       </div>
       <div class="col-3">
+        <nz-button-group class="m-b-40">
+          <button nz-button nzType="primary" *ngFor="let item of templates" (click)="selectTemp(item.name)">
+            {{item.name}}
+          </button>
+        </nz-button-group>
+        <nz-card nzTitle="Search">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input type="text" [(ngModel)]="search" nz-input placeholder="input search text" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" (click)="searchQuery()" nzSearch><i nz-icon nzType="search"></i></button>
+          </ng-template>
+          <ng-container *ngFor="let item of dataSource">
+            <nz-form-control>
+              <nz-form-label>{{item.field}}</nz-form-label>
+              <input nz-input [value]="item.value" type="text" readonly>
+            </nz-form-control>
+          </ng-container>
+          <button nz-button nzType="primary" (click)="Apply()" *ngIf="dataSource.length > 0">Apply</button>
+        </nz-card>
       </div>
     </div>
   </div>

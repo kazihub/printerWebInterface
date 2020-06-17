@@ -8,5 +8,9 @@ export const CommonLayout_ROUTES: Routes = [
   {
     path: 'card-design',
     loadChildren: () => import('../../card-design/card-design.module').then(m => m.CardDesignModule)
+  },
+  {
+    path: 'db-mapper',
+    loadChildren: () => import('../../db-mapper/db-mapper.module').then(m => m.DbMapperModule)
   }
 ];

@@ -19,8 +19,10 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Input() height = 'auto';
   @Input() underline = 'none';
   @Input() decorate = false;
-  @Input() posX: any;
-  @Input() posY: any;
+  @Input() mappedColumnName: string;
+  @Input() hasmapping = false;
+  @Input() posX: number;
+  @Input() posY: number;
   @Input() hasPos = false;
   @Input() id = this.appService.uuidv4();
   @Output() elementSelected = new EventEmitter<any>();
@@ -28,6 +30,7 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Output() formatChange = new EventEmitter<any>();
   @Output() Destroy = new EventEmitter<any>();
   @Output() XYPosition = new EventEmitter<any>();
+  offset = { x: 0, y: 0 };
 
   constructor(private appService: AppService) { }
   @ViewChild('element') element: ElementRef;
@@ -38,8 +41,6 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   move() {
     this.elementSelected.emit({id: this.id, ref: this.componentRef});
   }
-
-
 
   onResizeEnd(event: ResizeEvent): void {
     const size = event.rectangle;
@@ -58,7 +59,9 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
       fontWeight: this.fontWeight,
       fontStyle: this.fontStyle,
       underline: this.underline,
-      decorate: this.decorate
+      decorate: this.decorate,
+      mappedColumnName: this.mappedColumnName,
+      hasmapping: this.hasmapping
     });
   }
 
@@ -74,7 +77,11 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
         fontWeight: this.fontWeight,
         fontStyle: this.fontStyle,
         underline: this.underline,
-        decorate: this.decorate
+        decorate: this.decorate,
+        posY: this.posY,
+        posX: this.posX,
+        mappedColumnName: this.mappedColumnName,
+        hasmapping: this.hasmapping
       });
   }
 
@@ -91,7 +98,11 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
       fontWeight: this.fontWeight,
       fontStyle: this.fontStyle,
       underline: this.underline,
-      decorate: this.decorate
+      decorate: this.decorate,
+      posY: this.posY,
+      posX: this.posX,
+      mappedColumnName: this.mappedColumnName,
+      hasmapping: this.hasmapping
     });
   }
 
@@ -101,16 +112,8 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   }
 
   dragComplete(event: CdkDragEnd){
+    console.log(this.posX, event.source.getFreeDragPosition(), event.distance);
     this.XYPosition.emit(event.source.getFreeDragPosition());
-  }
-
-  public setPosition() {
-    const ele = document.getElementById(this.id);
-    if (this.hasPos) {
-      ele.style.left = `${this.posX}px`;
-      ele.style.top = `${this.posY}px`;
-    }
-    console.log(this.posX, this.posY);
   }
 
   ngAfterViewInit(): void {
@@ -120,6 +123,12 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
       ele.style.top = `${this.posY}px`;
       console.log(this.posX, this.posY);
     }
-    console.log(ele.style.left, ele.style.top, ele, this.hasPos);
+    console.log(ele.style.left, ele.style.top, this.hasPos);
+  }
+
+  public setPosition(u) {
+    console.log(u);
+    this.posX = u.x;
+    this.posY = u.y;
   }
 }

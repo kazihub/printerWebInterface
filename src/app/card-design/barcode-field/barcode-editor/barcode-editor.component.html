@@ -1,0 +1,46 @@
+<nz-card nzTitle="BARCODE EDITOR">
+  <nz-form-item>
+    <nz-form-control style="text-align: center !important;">
+      <nz-form-label>Preview</nz-form-label>
+      <ngx-barcode6
+        bc-format="CODE128"
+        [bc-value]="text"
+        [bc-height]="height"
+        [bc-width]="width"
+        [bc-display-value]="false">
+      </ngx-barcode6>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label>Value</nz-form-label>
+      <input nz-input [(ngModel)]="text" type="text">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label>Width</nz-form-label>
+      <input nz-input [(ngModel)]="width" type="number">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label>Height</nz-form-label>
+      <input nz-input [(ngModel)]="height" type="number">
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Has Mapping ?</nz-form-label>
+    <nz-switch [(ngModel)]="hasmapping"></nz-switch>
+  </nz-form-item>
+  <nz-form-item *ngIf="hasmapping === true">
+    <nz-form-label>Mapped Column</nz-form-label>
+    <nz-select style="width: 100%" placeholder="Mapped Column" [(ngModel)]="mappedColumnName">
+      <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </nz-form-item>
+  <div>
+    <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
+    <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>
+  </div>
+</nz-card>

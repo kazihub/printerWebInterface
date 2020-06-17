@@ -1,6 +1,8 @@
 <h1 class="example-box" mwlResizable [enableGhostResize]="true"
     [resizeEdges]="{ bottom: true, right: true, top: true, left: true }"
     (resizeEnd)="onResizeEnd($event)"
+    [style.top.px]="posX"
+    [style.left.px]="posY"
     [ngStyle]="
     {
     'font-size': fontSize+'px',

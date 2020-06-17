@@ -14,14 +14,6 @@ export class Login3Component implements OnInit{
   loginForm: FormGroup;
   loginClick = false;
 
-  submitForm(): void {
-    // tslint:disable-next-line:forin
-    for (const i in this.loginForm.controls) {
-      this.loginForm.controls[ i ].markAsDirty();
-      this.loginForm.controls[ i ].updateValueAndValidity();
-    }
-  }
-
   constructor(private fb: FormBuilder,
               private router: Router,
               private baseService: BaseService,

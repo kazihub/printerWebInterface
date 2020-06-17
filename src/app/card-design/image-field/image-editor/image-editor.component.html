@@ -10,9 +10,9 @@
       <input type="file" (change)="onFileChange($event)" #photo nz-input hidden>
       <button nz-button (click)="photo.click()" nzType="primary" class="m-r-10">Select Image</button>
     </nz-form-control>
-    <div class="m-t-20">
-      <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
-      <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>
-    </div>
   </nz-form-item>
+  <div>
+    <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
+    <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>
+  </div>
 </nz-card>

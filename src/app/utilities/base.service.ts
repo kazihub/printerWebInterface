@@ -76,7 +76,7 @@ export class BaseService {
 
   getUserRole(): any {
     if (this.getSesstionData()) {
-      return this.getSesstionData();
+      return this.getSesstionData().role;
     }
     return false;
   }
@@ -86,6 +86,6 @@ export class BaseService {
     return this.httpClient.post(this.getBaseUrl() + 'Account/CheckExpiry', { token: this.getToken().token });
   }
   logout(): any {
-    return this.httpClient.get(this.getBaseUrl() + 'Account/Logout/' + this.getUserData().accountId);
+    return this.httpClient.get(this.getBaseUrl() + 'Account/Logout/');
   }
 }

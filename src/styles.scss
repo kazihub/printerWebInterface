@@ -24,28 +24,38 @@ mwlResizable{
 
 .example-handle {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -5px;
+  right: -5px;
   color: #8e8e8e;
   cursor: move;
   width: 24px;
+  z-index: 1;
   height: 24px;
 }
 
 .close-handle {
   position: absolute;
-  top: -15px;
-  left: -15px;
+  top: -5px;
+  left: -5px;
+  z-index: 1;
   color: red;
   cursor: pointer;
   width: 24px;
   height: 24px;
 }
 
-.example-box:hover div{
+.example-box:hover .example-handle{
   display: block;
 }
 
-.example-box div{
+.example-box:hover .close-handle{
+  display: block;
+}
+
+.example-box .example-handle{
+  display: none;
+}
+
+.example-box .close-handle{
   display: none;
 }

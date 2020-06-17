@@ -11,6 +11,9 @@ export class ImageEditorComponent implements OnInit {
   @Input() width: any;
   @Input() height: any;
   default = 'assets/images/photo.svg';
+  @Input() mappedColumn: string;
+  @Input() positionX: any;
+  @Input() positionY: any;
   @Output() OnSubmit = new EventEmitter<any>();
   @Output() OnEditEnd = new EventEmitter<any>();
   constructor(public  sanitizer: DomSanitizer) { }

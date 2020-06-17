@@ -1,0 +1,148 @@
+<div class="page-header">
+  <h1>Settings
+  </h1>
+  <div class="row">
+    <div class="col">
+      <form nz-form [formGroup]="form" [nzLayout]="'inline'">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>Server</nz-form-label>
+            <input nz-input formControlName="server" placeholder="server" type="text">
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>Catalog</nz-form-label>
+            <input nz-input formControlName="catalog" placeholder="catalog" type="text">
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>User</nz-form-label>
+            <input nz-input formControlName="user" placeholder="user" type="text">
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>Pass</nz-form-label>
+            <input nz-input formControlName="pass" placeholder="password" type="password">
+          </nz-form-control>
+        </nz-form-item>
+        <div class="m-t-40">
+          <button nz-button (click)="savedb()" nzType="primary" class="m-r-10">Save & Connect</button>
+          <button nz-button (click)="form.reset()" nzType="primary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<nz-spin [nzSpinning]="loading">
+  <nz-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+          <h1 style="text-align: center">Main Table</h1>
+          <button nz-button nzType="primary" (click)="getTables()" class="m-r-10">Refresh Table List</button>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Table List</nz-form-label>
+              <nz-select [(ngModel)]="tablename" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of TableList" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <button nz-button nzType="primary" (click)="getFields()" class="m-r-10">Refresh Field List</button>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Field List</nz-form-label>
+              <nz-select [(ngModel)]="selectedFieldnames" [nzShowSearch]="true" nzMode="multiple">
+                <nz-option *ngFor="let item of FieldList" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Primary Key</nz-form-label>
+              <nz-select [(ngModel)]="primaryKey" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Search Field</nz-form-label>
+              <nz-select [(ngModel)]="searchField" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Has Dependant Fields ?</nz-form-label>
+            <nz-switch [(ngModel)]="hasDependant"></nz-switch>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label>Use Dependant Fields ?</nz-form-label>
+            <nz-switch [(ngModel)]="useDependantFields"></nz-switch>
+          </nz-form-item>
+          <button nz-button nzType="primary" class="m-r-10" (click)="generateQuery()">Generate Query</button>
+        </div>
+        <div class="col-3" *ngIf="hasDependant">
+          <h1 style="text-align: center">Dependant Table</h1>
+          <button nz-button nzType="primary" (click)="getDependantTables()" class="m-r-10">Refresh Table List</button>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Table List</nz-form-label>
+              <nz-select [(ngModel)]="Depentdanttablename" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of TableList2" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <button nz-button nzType="primary" (click)="getDependantFields()" class="m-r-10">Refresh Field List</button>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Field List</nz-form-label>
+              <nz-select [(ngModel)]="DependantselectedFieldnames" [nzShowSearch]="true" nzMode="multiple">
+                <nz-option *ngFor="let item of FieldList2" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Foreign Key</nz-form-label>
+              <nz-select [(ngModel)]="DependantForeignKey" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of DependantselectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Dependant Search Field</nz-form-label>
+              <nz-select [(ngModel)]="DependantsearchField" [nzShowSearch]="true">
+                <nz-option *ngFor="let item of DependantselectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <button nz-button nzType="primary" class="m-r-10" (click)="generateQuery()">Generate Query</button>
+        </div>
+        <div class="col-3">
+          <h1 style="text-align: center">Query</h1>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Generate Query</nz-form-label>
+              <textarea rows="4" nz-input [(ngModel)]="generatedQuery" readonly></textarea>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Custom Query</nz-form-label>
+              <textarea rows="4" nz-input [(ngModel)]="customQuery"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-3">
+          <h1 style="text-align: center">Configurations</h1>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+</nz-spin>

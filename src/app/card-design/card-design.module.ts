@@ -12,10 +12,14 @@ import { ImageFieldComponent } from './image-field/image-field.component';
 import {ResizableModule} from 'angular-resizable-element';
 import { ImageEditorComponent } from './image-field/image-editor/image-editor.component';
 import {NgxPrintModule} from 'ngx-print';
+import { BarcodeFieldComponent } from './barcode-field/barcode-field.component';
+import { BarcodeEditorComponent } from './barcode-field/barcode-editor/barcode-editor.component';
+import {NgxBarcode6Module} from 'ngx-barcode6';
+import { NewTemplateComponent } from './new-template/new-template.component';
 
 
 @NgModule({
-  declarations: [CardDesignComponent, TextFieldComponent, TextFieldEditorComponent, ImageFieldComponent, ImageEditorComponent],
+  declarations: [CardDesignComponent, TextFieldComponent, TextFieldEditorComponent, ImageFieldComponent, ImageEditorComponent, BarcodeFieldComponent, BarcodeEditorComponent, NewTemplateComponent],
   imports: [
     CommonModule,
     CardDesignRoutingModule,
@@ -23,8 +27,9 @@ import {NgxPrintModule} from 'ngx-print';
     NgZorroAntdModule,
     FormsModule,
     ResizableModule,
-    NgxPrintModule
+    NgxPrintModule,
+    NgxBarcode6Module
   ],
-  entryComponents: [TextFieldEditorComponent]
+  entryComponents: [TextFieldEditorComponent, NewTemplateComponent]
 })
 export class CardDesignModule { }

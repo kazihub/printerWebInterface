@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { ThemeConstantService } from '../../services/theme-constant.service';
 import {BaseService} from '../../../utilities/base.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,8 @@ import {BaseService} from '../../../utilities/base.service';
 export class HeaderComponent implements OnInit{
 
   constructor( private themeService: ThemeConstantService,
-               public baseService: BaseService) {}
+               public baseService: BaseService,
+               private router: Router) {}
 
   searchVisible = false;
   quickViewVisible = false;
@@ -67,5 +69,15 @@ export class HeaderComponent implements OnInit{
 
   quickViewToggle(): void {
     this.quickViewVisible = !this.quickViewVisible;
+  }
+
+  logout(): void {
+    this.baseService.logout().subscribe(
+      result => {
+        if (result.status === 105) {
+          this.router.navigate(['/']);
+        }
+      }
+    );
   }
 }
