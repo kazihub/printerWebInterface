@@ -17,12 +17,26 @@ export class BaseService {
 
   private now: any;
 
-  // tslint:disable-next-line:ban-types
-  private menuSource = new BehaviorSubject<String>('Main');
+  private menuSource = new BehaviorSubject<string>('Main');
   currentMenu = this.menuSource.asObservable();
+
+  private nameSource = new BehaviorSubject<any>('');
+  currentName = this.nameSource.asObservable();
+
+  private searchSource = new BehaviorSubject<boolean>(false);
+  currentSearch = this.searchSource.asObservable();
 
   Menu(menu): void {
     this.menuSource.next(menu);
+    // console.log(menu);
+  }
+  Name(name): void {
+    this.nameSource.next(name);
+    // console.log(menu);
+  }
+
+  Search(menu): void {
+    this.searchSource.next(menu);
     // console.log(menu);
   }
 

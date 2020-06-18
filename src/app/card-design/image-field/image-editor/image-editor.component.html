@@ -11,6 +11,16 @@
       <button nz-button (click)="photo.click()" nzType="primary" class="m-r-10">Select Image</button>
     </nz-form-control>
   </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>Has Mapping ?</nz-form-label>
+    <nz-switch [(ngModel)]="hasmapping"></nz-switch>
+  </nz-form-item>
+  <nz-form-item *ngIf="hasmapping === true">
+    <nz-form-label>Mapped Column</nz-form-label>
+    <nz-select style="width: 100%" placeholder="Mapped Column" [(ngModel)]="mappedColumnName">
+      <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </nz-form-item>
   <div>
     <button nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
     <button nz-button (click)="endEdit()" nzType="primary">End Edit</button>

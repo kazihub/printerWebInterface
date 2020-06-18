@@ -20,6 +20,7 @@ import {BarcodeFieldComponent} from './barcode-field/barcode-field.component';
 import {BarcodeEditorComponent} from './barcode-field/barcode-editor/barcode-editor.component';
 import {NewTemplateComponent} from './new-template/new-template.component';
 import {NzModalService} from 'ng-zorro-antd';
+import {ElementService} from './element.service';
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -71,36 +72,53 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   DataTable: any[];
   templates: any[];
   templatename: any;
+  templateId: any;
+  visible = false;
   dataSource: Array<any> = [];
+
   mainControls = [
     {
       icon: 'folder',
       handle: (u) => u.click(),
       hasElement: true,
-      disabled: false
+      disabled: false,
+      tooltip: 'select background'
     },
+    {
+      icon: 'printer',
+      handle: false,
+      hasElement: false,
+      tooltip: 'print'
+    },
+    {
+      icon: 'search',
+      handle: () => this.toggleSearch(),
+      hasElement: false,
+      tooltip: 'search'
+    }
+  ];
+
+  elementsControls = [
     {
       icon: 'font-size',
       handle: () => this.createTextField(),
       disabled: false,
-      hasElement: false
+      hasElement: false,
+      tooltip: 'add text'
     },
     {
       icon: 'file-image',
       handle: () => this.createImageBox(),
       disabled: false,
-      hasElement: false
+      hasElement: false,
+      tooltip: 'add image'
     },
     {
-      icon: 'qrcode',
+      icon: 'barcode',
       handle: () => this.createCodeField(),
       disabled: false,
-      hasElement: false
-    },
-    {
-      icon: 'printer',
-      handle: false,
-      hasElement: false
+      hasElement: false,
+      tooltip: 'add barcode'
     }
   ];
 
@@ -109,45 +127,36 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       icon: 'bold',
       hasIcon: true,
       handle: () => this.currentRef.instance.setBold(),
-      disabled: true
+      disabled: true,
+      tooltip: 'bold'
     },
     {
       icon: 'italic',
       hasIcon: true,
       handle: () => this.currentRef.instance.setItalic(),
-      disabled: true
+      disabled: true,
+      tooltip: 'italic'
     },
     {
       icon: 'underline',
       hasIcon: true,
       handle: () => this.currentRef.instance.setUnderline(),
-      disabled: true
-    },
-    {
-      icon: '',
-      hasIcon: false,
-      handle: () => {},
-      text: this.xposition,
-      disabled: false
-    },
-    {
-      icon: '',
-      hasIcon: false,
-      handle: () => {},
-      text: this.yposition,
-      disabled: false
+      disabled: true,
+      tooltip: 'under line'
     },
     {
       icon: this.editIcon,
       hasIcon: true,
       handle: () => this.Editing(),
-      disabled: false
+      disabled: false,
+      tooltip: 'editing'
     },
     {
       icon: 'save',
       hasIcon: true,
       handle: () => this.saveTemp(),
-      disabled: false
+      disabled: false,
+      tooltip: 'save cureent changes'
     }
   ];
 
@@ -155,10 +164,15 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   @ViewChild('setupcontainer', { read: ViewContainerRef }) setup: ViewContainerRef;
   constructor(private resolver: ComponentFactoryResolver,
               private notify: NotifyService,
+              private element: ElementService,
               private baseService: BaseService,
               private appService: AppService,
               private modalService: NzModalService,
-              private sanitizer: DomSanitizer) { }
+              private sanitizer: DomSanitizer) {
+    baseService.currentSearch.subscribe(u => {
+      this.visible = u;
+    });
+  }
 
   ngAfterViewInit(): void {
     this.getTemp();
@@ -170,42 +184,51 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.toggleKeyMovability();
+  }
+
+  toggleKeyMovability() {
     $(document).keydown((e) => {
       if (this.selected.length > 0) {
         $('#' + this.selected[0].id).finish().clearQueue().stop();
       }
       this.selected = [];
-      const data = 0;
+      const item = this.list.find(x => x.ref === this.currentRef);
       this.selected.push({id: this.current});
       if (e.which === 38) {
         $('#' + this.current).animate({
           top: '-=2'
         }).finish();
-        // data = this.currentRef.instance.posY -= 2;
-        // this.yposition = `y: ${data}`;
+        item.meta.positionY =  parseFloat(item.meta.positionY) - 2;
+        this.yposition = item.meta.positionY;
       }
       if (e.which === 40) {
         $('#' + this.current).animate({
           top: '+=2'
         }).finish();
-        // data = this.currentRef.instance.posY += 2;
-        // this.yposition = `y: ${data}`;
+        item.meta.positionY =  parseFloat(item.meta.positionY) + 2;
+        this.yposition = item.meta.positionY;
       }
       if (e.which === 37) {
         $('#' + this.current).animate({
           left: '-=2'
         }).finish();
-        // data = this.currentRef.instance.posX -= 2;
-        // this.xposition = `x: ${data}`;
+        item.meta.positionX =  parseFloat(item.meta.positionX) - 2;
+        this.xposition = item.meta.positionX;
       }
       if (e.which === 39) {
         $('#' + this.current).animate({
           left: '+=2'
         }).finish();
-        // data = this.currentRef.instance.posX += 2;
-        // this.xposition = `x: ${data}`;
+        item.meta.positionX =  parseFloat(item.meta.positionX) + 2;
+        this.xposition = item.meta.positionX;
       }
     });
+  }
+
+  toggleSearch() {
+    this.visible = !this.visible;
+    this.baseService.Search(this.visible);
   }
 
   createTextField(options?: Fields, hasPos?: boolean) {
@@ -216,9 +239,6 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.componentRef.instance.elementSelected.subscribe(u => {
       this.current = u.id;
       this.currentRef = u.ref;
-      console.log(this.current);
-      const item = this.list.find(x => x.ref === this.currentRef);
-      const ele = document.getElementById(this.current);
       this.textControls.forEach(x => x.disabled = false);
       this.OpenEditor(u.ref);
     });
@@ -227,6 +247,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       this.currentSetupRef.instance.fontWeight = u.fontWeight;
       this.currentSetupRef.instance.fontStyle = u.fontStyle;
       this.currentSetupRef.instance.decorate = u.decorate;
+      this.currentRef.instance.fontSize = u.fontSize;
       this.currentSetupRef.instance.underline = u.underline;
 
       const item = this.list.find(x => x.ref === this.currentRef);
@@ -235,16 +256,15 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       item.meta.decorate = u.decorate;
       item.meta.underline = u.underline;
       item.meta.text = u.text;
+      item.meta.fontSize = u.fontSize;
       item.meta.hasmapping = u.hasmapping;
+
       item.meta.mappedColumnName = u.mappedColumnName;
     });
     this.componentRef.instance.XYPosition.subscribe(u => {
       const item = this.list.find(x => x.ref === this.currentRef);
-      const ele = document.getElementById(this.current);
       item.meta.positionX = parseFloat(item.meta.positionX) + parseFloat(u.x);
       item.meta.positionY = parseFloat(item.meta.positionY) + parseFloat(u.y);
-      // item.meta.positionX = parseFloat(u.x);
-      // item.meta.positionY = parseFloat(u.y);
       this.xposition = item.meta.positionX;
       this.yposition = item.meta.positionY;
     });
@@ -280,6 +300,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
         meta: {
           fontWeight: this.componentRef.instance.fontWeight,
           fontStyle: this.componentRef.instance.fontStyle,
+          fontSize: this.componentRef.instance.fontSize,
+          templateId: this.templateId,
           decorate: this.componentRef.instance.decorate,
           underline: this.componentRef.instance.underline,
           text: this.componentRef.instance.text,
@@ -308,8 +330,6 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       const ele = document.getElementById(this.current);
       item.meta.positionX = parseFloat(item.meta.positionX) + parseFloat(u.x);
       item.meta.positionY = parseFloat(item.meta.positionY) + parseFloat(u.y);
-      // item.meta.positionX = parseFloat(u.x);
-      // item.meta.positionY = parseFloat(u.y);
       this.xposition = item.meta.positionX;
       this.yposition = item.meta.positionY;
     });
@@ -345,6 +365,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           positionY:  this.componentRef.instance.posY,
           width: this.componentRef.instance.width,
           height: this.componentRef.instance.height,
+          templateId: this.templateId,
           hasmapping: this.componentRef.instance.hasmapping,
           mappedColumnName: this.componentRef.instance.mappedColumnName,
           type: 'code'
@@ -353,55 +374,58 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     }
   }
 
-  createImageBox(options?: Fields, hasPos?: boolean) {
+  createImageBox(options?: Fields,
+                 hasPos?: boolean
+  ) {
     const factory = this.resolver.resolveComponentFactory(ImageFieldComponent);
     this.componentRef = this.entry.createComponent(factory);
     this.componentRef.instance.componentRef = this.componentRef;
-    this.componentRef.instance.hasPos = hasPos;
-    if (hasPos) {
-      this.componentRef.instance.posX = options.positionX;
-      this.componentRef.instance.posY = options.positionY;
-      this.componentRef.instance.src = options.src;
-    }
     this.componentRef.instance.elementSelected.subscribe(u => {
       this.current = u.id;
       this.currentRef = u.ref;
-      const item = this.list.find(x => x.ref === this.currentRef);
-      const ele = document.getElementById(this.current);
-      // this.xposition = this.getOffset(ele).left;
-      // this.yposition = this.getOffset(ele).top;
-      item.meta.positionX = this.xposition;
-      item.meta.positionY = this.yposition;
       this.OpenImageEditor(u.ref);
     });
     this.componentRef.instance.Destroy.subscribe(u => {
       if (u === true) {
         this.list.splice(this.list.findIndex(c => c.ref === this.currentRef), 1);
-        this.currentSetupRef.destroy();
+        this.currentRef.destroy();
       }
     });
     this.componentRef.instance.XYPosition.subscribe(u => {
       const item = this.list.find(x => x.ref === this.currentRef);
-      const ele = document.getElementById(this.current);
-      // this.xposition = this.getOffset(ele).left;
-      // this.yposition = this.getOffset(ele).top;
-      item.meta.positionX = this.xposition;
-      item.meta.positionY = this.yposition;
+      item.meta.positionX = parseFloat(item.meta.positionX) + parseFloat(u.x);
+      item.meta.positionY = parseFloat(item.meta.positionY) + parseFloat(u.y);
+      this.xposition = item.meta.positionX;
+      this.yposition = item.meta.positionY;
     });
     if (options) {
+      this.componentRef.instance.setPosition({x: options.positionX, y: options.positionY });
+      this.componentRef.instance.hasmapping = options.hasmapping;
+      this.componentRef.instance.mappedColumnName = options.mappedColumnName;
+      this.componentRef.instance.hasPos = hasPos;
+      this.componentRef.instance.src = options.src;
+      this.componentRef.instance.width = options.width;
+      this.componentRef.instance.height = options.height;
+      this.xposition = options.positionX;
+      this.yposition = options.positionY;
       this.list.push({
         ref: this.componentRef,
         meta: options
       });
     } else {
+      this.componentRef.instance.posX = 200;
+      this.componentRef.instance.posY = 200;
       this.list.push({
         ref: this.componentRef,
         meta: {
           src: this.componentRef.instance.src,
           width: this.componentRef.instance.width,
           height: this.componentRef.instance.height,
-          positionX: null,
-          positionY:  null,
+          templateId: this.templateId,
+          positionX: this.componentRef.instance.posX,
+          positionY:  this.componentRef.instance.posY,
+          hasmapping: this.componentRef.instance.hasmapping,
+          mappedColumnName: this.componentRef.instance.mappedColumnName,
           type: 'image'
         }
       });
@@ -435,12 +459,14 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       const item = this.list.find(x => x.ref === this.currentRef);
       item.meta.fontWeight = u.fontWeight;
       item.meta.fontStyle = u.fontStyle;
+      item.meta.fontSize = u.fontSize;
       item.meta.decorate = u.decorate;
       item.meta.underline = u.underline;
       item.meta.text = u.text;
       item.meta.mappedColumnName = u.mappedColumnName;
       item.meta.hasmapping = u.hasmapping;
       this.notify.createMessage('info', 'Applied successfully');
+      console.log(this.list);
     });
     this.setupRef.instance.OnEditEnd.subscribe(u => {
       if (u === true) {
@@ -498,7 +524,15 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.currentSetupRef = this.setupRef;
   }
 
-  OpenImageEditor(comp: ComponentRef<any>): void {
+  OpenImageEditor(
+    comp: ComponentRef<any>,
+    setupRef?: ComponentRef<any>,
+    list?: Array<any>,
+    current?: any,
+    currentSetupRef?: ComponentRef<any>,
+    resolver?: ComponentFactoryResolver,
+    setup?: ViewContainerRef
+    ): void {
     if (this.currentSetupRef) {
       this.currentSetupRef.destroy();
     }
@@ -507,21 +541,18 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.setupRef.instance.src = comp.instance.src;
     this.setupRef.instance.width = comp.instance.width;
     this.setupRef.instance.height = comp.instance.height;
-    this.setupRef.instance.positionY = comp.instance.posY;
-    this.setupRef.instance.positionX = comp.instance.posX;
     this.setupRef.instance.OnSubmit.subscribe(u => {
-      console.log(u);
       comp.instance.src = u.src;
       comp.instance.width = u.width;
       comp.instance.height = u.height;
-      comp.instance.posX = u.positionX;
-      comp.instance.posY = u.positionY;
+      comp.instance.hasmapping = u.hasmapping;
+      comp.instance.mappedColumnName = u.mappedColumnName;
       const item = this.list.find(x => x.ref === this.currentRef);
       item.meta.src = u.src;
       item.meta.width = u.width;
       item.meta.height = u.height;
-      item.meta.positionX = u.posX;
-      item.meta.positionY = u.posY;
+      item.meta.mappedColumnName = u.mappedColumnName;
+      item.meta.hasmapping = u.hasmapping;
       this.notify.createMessage('info', 'Applied successfully');
     });
     this.setupRef.instance.OnEditEnd.subscribe(u => {
@@ -575,8 +606,21 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     }
     const data = [];
     this.list.forEach(u => {
+      u.meta.templateId = this.templateId;
       data.push(u.meta);
     });
+
+    const find = data.find(u => u.type === 'bg');
+    console.log(find);
+    if (!find) {
+      data.push({
+        type: 'bg',
+        src: this.bgimage,
+        templateId: this.templateId
+      });
+    } else {
+      find.src = this.bgimage;
+    }
 
     console.log(data);
     this.loading = true;
@@ -604,13 +648,17 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           this.notify.createMessage('info', result.message);
           this.loading = false;
           this.templatename = this.templates[0].name;
+          this.baseService.Name(this.templatename);
+          this.templateId = this.templates[0].id;
           this.templates[0].data.forEach(u => {
             if (u.type === 'bg') {
               this.bgimage = u.src;
+              console.log(this.bgimage, 'ggh');
             } else if (u.type === 'text') {
               this.createTextField({
                 fontWeight: u.fontWeight,
                 fontStyle: u.fontStyle,
+                fontSize: u.fontSize,
                 decorate: u.decorate,
                 underline: u.underline,
                 text: u.text,
@@ -672,6 +720,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   searchQuery() {
     this.loading = true;
+    this.dataSource = [];
     this.appService.search({search: this.search}).subscribe(u => {
       console.log(u);
       if (u.result === 100) {
@@ -720,6 +769,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.list = [];
 
     this.templatename = temp;
+    this.baseService.Name(this.templatename);
     data.forEach(u => {
       if (u.type === 'bg') {
         this.bgimage = u.src;
@@ -771,6 +821,10 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     });
 
     modal.afterClose.subscribe(x => {
+      if (!x){
+        this.notify.createMessage('info', 'template name not set');
+        return;
+      }
       this.templatename = x;
       const data = [];
       this.list.forEach(u => {
@@ -805,5 +859,13 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           this.loading = false;
         });
     });
+  }
+
+  open(): void {
+
+  }
+
+  close(): void {
+    this.visible = false;
   }
 }

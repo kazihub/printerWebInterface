@@ -9,10 +9,14 @@ import {Router} from '@angular/router';
 })
 
 export class HeaderComponent implements OnInit{
-
+  Templatename: any;
   constructor( private themeService: ThemeConstantService,
                public baseService: BaseService,
-               private router: Router) {}
+               private router: Router) {
+    baseService.currentName.subscribe(u => {
+      this.Templatename = u;
+    });
+  }
 
   searchVisible = false;
   quickViewVisible = false;
@@ -65,6 +69,7 @@ export class HeaderComponent implements OnInit{
 
   searchToggle(): void {
     this.searchVisible = !this.searchVisible;
+    this.baseService.Search(this.searchVisible);
   }
 
   quickViewToggle(): void {

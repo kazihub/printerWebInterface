@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
+import {DbService} from '../../../db-mapper/db.service';
 
 @Component({
   selector: 'app-image-editor',
@@ -14,18 +15,27 @@ export class ImageEditorComponent implements OnInit {
   @Input() mappedColumn: string;
   @Input() positionX: any;
   @Input() positionY: any;
+  @Input() mappedColumnName: string;
+  @Input() hasmapping = false;
+  @Input() selectedFieldnames: any[];
   @Output() OnSubmit = new EventEmitter<any>();
   @Output() OnEditEnd = new EventEmitter<any>();
-  constructor(public  sanitizer: DomSanitizer) { }
+  constructor(public  sanitizer: DomSanitizer,
+              private  dbService: DbService) { }
 
   ngOnInit(): void {
+    this.getQuery();
   }
 
   close() {
     this.OnSubmit.emit({
+      positionX: this.positionX,
+      positionY: this.positionY,
       src: this.src,
       width: this.width,
-      height: this.height
+      height: this.height,
+      mappedColumnName: this.mappedColumnName,
+      hasmapping: this.hasmapping
     });
   }
 
@@ -51,6 +61,20 @@ export class ImageEditorComponent implements OnInit {
     } else {
       this.src = this.default;
     }
+  }
+
+  getQuery() {
+    this.dbService.getOnlyFields().subscribe(
+      result => {
+        if (result.result === 100) {
+          this.selectedFieldnames = [];
+          this.selectedFieldnames = result.data.map(u => u.columnName);
+        } else {
+        }
+      },
+      error => {
+      }
+    );
   }
 
 }

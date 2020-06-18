@@ -6,6 +6,12 @@ import {AuthService} from '../authentication/authentication.service';
 import {NotifyService} from '../notify.service';
 import {DbService} from './db.service';
 
+export interface Action {
+  value?: string;
+  action?: 'query' | 'searchParam';
+  param?: string;
+}
+
 @Component({
   selector: 'app-db-mapper',
   templateUrl: './db-mapper.component.html',
@@ -15,17 +21,37 @@ export class DbMapperComponent implements OnInit {
   form: FormGroup;
   loading = false;
   TableList: any[];
+  useTableAlias = false;
+  Constants = [
+    'SELECT',
+    'FROM',
+    'WHERE',
+    'AS',
+    'ON',
+    '=',
+    'AND',
+    'INNER JOIN',
+    'RIGHT JOIN',
+    'LEFT JOIN',
+    'FULL JOIN'
+  ];
+  constant: any;
+  tableAlias: any;
+  fieldAlias: any;
   TableList2: any[];
   FieldList: any[];
   FieldList2: any[];
+  AliasList: Array<any> = [];
   hasDependant = false;
   useDependantFields = false;
   searchField: any;
+  searchFieldList: Array<any> = [];
   DependantsearchField: any;
   primaryKey: any;
   DependantForeignKey: any;
   customQuery: any;
   generatedQuery = '';
+  actionList: Array<Action> = [];
   @Input() tablename: any;
   @Input() Depentdanttablename: any;
   @Input() selectedFieldnames: any[];
@@ -45,6 +71,113 @@ export class DbMapperComponent implements OnInit {
     });
     this.getQuery();
   }
+
+  addConstToQuery() {
+    if (this.actionList.length === 0) {
+      this.generatedQuery = `${this.constant} `;
+    } else {
+      this.generatedQuery = `${this.generatedQuery} ${this.constant} `;
+    }
+    this.actionList.push({
+      value: this.generatedQuery,
+      action: 'query'
+    });
+  }
+
+  addTableToQuery() {
+    if (this.useTableAlias) {
+      this.AliasList.push({
+        table: this.tablename,
+        alias: this.tableAlias
+      });
+      this.generatedQuery = `${this.generatedQuery} ${this.tablename} AS ${this.tableAlias}`;
+    } else {
+      this.generatedQuery = `${this.generatedQuery} ${this.tablename}`;
+    }
+    this.actionList.push({
+      value: this.generatedQuery,
+      action: 'query'
+    });
+  }
+
+  aliasChange() {
+    const data = this.AliasList.find(u => u.alias === this.fieldAlias);
+    if (data) {
+      this.tablename = data.table;
+      this.tableAlias = data.alias;
+      this.selectedFieldnames = [];
+      this.getFields();
+    } else {
+      alert('not found');
+    }
+  }
+
+  addtoAlias() {
+    if (this.tablename) {
+      this.AliasList.push({
+        table: this.tablename,
+        alias: this.tableAlias
+      });
+      this.fieldAlias = this.tableAlias;
+    }
+  }
+
+  addSearchParam() {
+    this.generatedQuery = `${this.generatedQuery} @${this.searchField}`;
+    this.searchFieldList.push({
+      param: `@${this.searchField}`,
+      field: this.searchField
+    });
+    this.actionList.push({
+      value: this.generatedQuery,
+      action: 'searchParam',
+      param: this.searchField
+    });
+  }
+
+  addValue() {
+    const val = ',';
+    this.generatedQuery = `${this.generatedQuery}${val}`;
+    this.actionList.push({
+      value: this.generatedQuery,
+      action: 'query'
+    });
+  }
+
+  addFieldsToQuery() {
+    if (this.useTableAlias) {
+      this.selectedFieldnames.forEach((u, index) => {
+        if (index === this.selectedFieldnames.length - 1) {
+          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u}`;
+        } else {
+          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u},`;
+        }
+      });
+    } else {
+      this.selectedFieldnames.forEach((u, index) => {
+        if (index === this.selectedFieldnames.length - 1) {
+          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}`;
+        } else {
+          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias},`;
+        }
+      });
+    }
+    this.actionList.push({
+      value: this.generatedQuery,
+      action: 'query'
+    });
+  }
+
+  undoAction() {
+    this.generatedQuery = '';
+    const data = this.actionList[this.actionList.length - 1];
+    if (data.action === 'searchParam') {
+      this.searchFieldList.splice(this.searchFieldList.findIndex(u => u.field === data.param), 1);
+    }
+    this.actionList.splice(this.actionList.length - 1, 1);
+    this.generatedQuery = this.actionList[this.actionList.length - 1].value;
+  }
+
 
   savedb(): void {
     this.loading = true;
@@ -243,7 +376,6 @@ export class DbMapperComponent implements OnInit {
 
   getQuery() {
     this.loading = true;
-    this.generatedQuery = 'Select';
     this.dbService.getQuery().subscribe(
       result => {
         if (result.result === 100) {

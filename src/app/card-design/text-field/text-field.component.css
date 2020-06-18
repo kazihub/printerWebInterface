@@ -3,5 +3,6 @@
   display: inline-block;
   color: rgba(0, 0, 0, 0.87);
   z-index: 4;
-  padding: 3px;
+  padding: 10px;
+  cursor: move;
 }

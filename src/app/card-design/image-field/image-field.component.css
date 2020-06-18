@@ -3,4 +3,6 @@
   display: inline-block;
   color: rgba(0, 0, 0, 0.87);
   /*border: dashed grey 1px;*/
+  cursor: move;
+  z-index: 4;
 }

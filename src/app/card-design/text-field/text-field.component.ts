@@ -24,6 +24,7 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Input() posX: number;
   @Input() posY: number;
   @Input() hasPos = false;
+  element: any;
   @Input() id = this.appService.uuidv4();
   @Output() elementSelected = new EventEmitter<any>();
   @Input() componentRef: ComponentRef<any>;
@@ -33,13 +34,17 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   offset = { x: 0, y: 0 };
 
   constructor(private appService: AppService) { }
-  @ViewChild('element') element: ElementRef;
 
   ngOnInit(): void {
   }
 
   move() {
     this.elementSelected.emit({id: this.id, ref: this.componentRef});
+  }
+
+  setText() {
+    const ele = document.getElementById(this.id);
+    this.text = ele.innerText;
   }
 
   onResizeEnd(event: ResizeEvent): void {

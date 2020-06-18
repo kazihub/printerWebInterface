@@ -37,7 +37,7 @@
   </div>
 </div>
 <nz-spin [nzSpinning]="loading">
-  <nz-card>
+  <nz-card hidden>
     <div class="container-fluid">
       <div class="row">
         <div class="col-3">
@@ -141,6 +141,101 @@
         </div>
         <div class="col-3">
           <h1 style="text-align: center">Configurations</h1>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+  <nz-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-4">
+          <nz-form-label>Query Constants</nz-form-label>
+          <nz-input-group nzCompact>
+            <nz-select [(ngModel)]="constant" [nzShowSearch]="true" style="width: 90%">
+              <nz-option *ngFor="let item of Constants" [nzValue]="item" [nzLabel]="item"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" (click)="addConstToQuery()" style="width: 10%">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-input-group>
+          <nz-divider></nz-divider>
+          <nz-form-label>Table List</nz-form-label>
+          <nz-input-group nzCompact>
+            <button nz-button nzType="primary" (click)="getTables()" style="width: 10%">
+              <i nz-icon nzType="reload" nzTheme="outline"></i>
+            </button>
+            <nz-select [(ngModel)]="tablename" [nzShowSearch]="true" style="width: 80%">
+              <nz-option *ngFor="let item of TableList" [nzValue]="item" [nzLabel]="item"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" (click)="addTableToQuery()" style="width: 10%">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-input-group>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Use Table Alias ?</nz-form-label>
+              <nz-switch [(ngModel)]="useTableAlias"></nz-switch>
+            </nz-form-control>
+          </nz-form-item>
+          <div *ngIf="useTableAlias">
+            <nz-form-label>Select Alias</nz-form-label>
+            <nz-input-group nzCompact>
+              <nz-select [(ngModel)]="fieldAlias" [nzShowSearch]="true" style="width: 80%" (ngModelChange)="aliasChange()">
+                <nz-option *ngFor="let item of AliasList" [nzValue]="item.alias" nzLabel="{{item.table}} AS {{item.alias}}"></nz-option>
+              </nz-select>
+            </nz-input-group>
+            <nz-form-label>Map Table Alias</nz-form-label>
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="tableAlias" type="text" style="width: 90%">
+              <button nz-button nzType="primary" (click)="addtoAlias()" style="width: 10%" *ngIf="tableAlias">
+                <i nz-icon nzType="plus" nzTheme="outline"></i>
+              </button>
+            </nz-input-group>
+          </div>
+          <nz-divider></nz-divider>
+          <nz-form-label>Field List</nz-form-label>
+          <nz-input-group nzCompact>
+            <button nz-button nzType="primary" (click)="getFields()" style="width: 10%">
+              <i nz-icon nzType="reload" nzTheme="outline"></i>
+            </button>
+            <nz-select [(ngModel)]="selectedFieldnames" [nzShowSearch]="true" nzMode="multiple" style="width: 80%">
+              <nz-option *ngFor="let item of FieldList" [nzValue]="item" [nzLabel]="item"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" (click)="addFieldsToQuery()" style="width: 10%">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-input-group>
+          <nz-divider></nz-divider>
+          <nz-form-label>Search Field</nz-form-label>
+          <nz-input-group nzCompact>
+            <nz-select [(ngModel)]="searchField" [nzShowSearch]="true" style="width: 90%">
+              <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" (click)="addSearchParam()" style="width: 10%">
+              <i nz-icon nzType="plus" nzTheme="outline"></i>
+            </button>
+          </nz-input-group>
+        </div>
+        <div class="col-8">
+          <nz-button-group>
+            <button nz-button nzType="primary" (click)="undoAction()">
+              undo action
+            </button>
+            <button nz-button nzType="primary" (click)="addValue()">
+              add comma
+            </button>
+          </nz-button-group>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Generated Query</nz-form-label>
+              <textarea rows="20" nz-input [(ngModel)]="generatedQuery" readonly></textarea>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" (click)="generateQuery()">Save Query</button>
+            </nz-form-control>
+          </nz-form-item>
         </div>
       </div>
     </div>

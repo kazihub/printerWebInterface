@@ -15,6 +15,8 @@ export class ImageFieldComponent implements OnInit, AfterViewInit {
   @Input() posX: any;
   @Input() posY: any;
   @Input() hasPos = false;
+  @Input() mappedColumnName: string;
+  @Input() hasmapping = false;
   @Input() id = this.appService.uuidv4();
   @Input() componentRef: ComponentRef<any>;
   @Output() elementSelected = new EventEmitter<any>();
@@ -47,10 +49,15 @@ export class ImageFieldComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    const ele = document.getElementById(this.id);
     if (this.hasPos) {
-      this.element.nativeElement.style.left = `${this.posX}px`;
-      this.element.nativeElement.style.top = `${this.posY}px`;
+      ele.style.left = `${this.posX}px`;
+      ele.style.top = `${this.posY}px`;
     }
-    console.log(this.element.nativeElement.style.left, this.element.nativeElement.style.top);
+  }
+
+  public setPosition(u) {
+    this.posX = u.x;
+    this.posY = u.y;
   }
 }
