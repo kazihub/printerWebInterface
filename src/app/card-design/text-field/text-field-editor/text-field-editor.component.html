@@ -72,14 +72,24 @@
         </nz-form-item>
       </div>
     </div>
-    <nz-form-item *ngIf="hasmapping === true">
-      <nz-form-control>
-        <nz-form-label>Mapped Column</nz-form-label>
-        <nz-select style="width: 100%" placeholder="Mapped Column" [(ngModel)]="mappedColumnName">
-          <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
-        </nz-select>
-      </nz-form-control>
-    </nz-form-item>
+    <div *ngIf="hasmapping === true">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label>Mapping Type</nz-form-label>
+          <nz-select style="width: 100%" placeholder="Map Type" [(ngModel)]="mappinType">
+            <nz-option *ngFor="let item of options" [nzValue]="item" [nzLabel]="item"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label>Mapped Column</nz-form-label>
+          <nz-select style="width: 100%" placeholder="Mapped Column" [(ngModel)]="mappedColumnName" nzMode="multiple">
+            <nz-option *ngFor="let item of selectedFieldnames" [nzValue]="item" [nzLabel]="item"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
     <button nzSize="small" nz-button (click)="close()" nzType="primary" class="m-r-10">Apply</button>
     <button nzSize="small" nz-button (click)="endEdit()" nzType="primary">End Edit</button>
   </div>

@@ -17,10 +17,15 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Input() decorate = false;
   @Input() tablename: any;
   @Input() positionX: any;
+  @Input() mappinType: any;
   @Input() positionY: any;
   @Input() selectedFieldnames: any[];
-  @Input() mappedColumnName: string;
+  @Input() mappedColumnName: any[];
   @Input() hasmapping = false;
+  options = [
+    'DATE',
+    'TEXT'
+  ];
   @Output() OnSubmit = new EventEmitter<any>();
   @Output() OnEditEnd = new EventEmitter<any>();
 
@@ -51,7 +56,8 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
       decorate: this.decorate,
       positionX: this.positionX,
       positionY: this.positionY,
-      mappedColumnName: this.mappedColumnName,
+      mappinType: this.mappinType,
+      mappedColumnName: JSON.stringify(this.mappedColumnName),
       hasmapping: this.hasmapping
     });
   }
@@ -92,7 +98,8 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
       decorate: this.decorate,
       positionX: this.positionX,
       positionY: this.positionY,
-      mappedColumnName: this.mappedColumnName,
+      mappinType: this.mappinType,
+      mappedColumnName: JSON.stringify(this.mappedColumnName),
       hasmapping: this.hasmapping
     });
   }

@@ -8,7 +8,7 @@ import {DbService} from './db.service';
 
 export interface Action {
   value?: string;
-  action?: 'query' | 'searchParam';
+  action?: 'query' | 'searchParam' | 'fields';
   param?: string;
 }
 
@@ -46,6 +46,7 @@ export class DbMapperComponent implements OnInit {
   useDependantFields = false;
   searchField: any;
   searchFieldList: Array<any> = [];
+  finalSearchFieldList: Array<any> = [];
   DependantsearchField: any;
   primaryKey: any;
   DependantForeignKey: any;
@@ -69,7 +70,8 @@ export class DbMapperComponent implements OnInit {
       user: [null, Validators.required],
       pass: [null, Validators.required]
     });
-    this.getQuery();
+    // this.getQuery();
+    this.getSavedQuery();
   }
 
   addConstToQuery() {
@@ -152,13 +154,25 @@ export class DbMapperComponent implements OnInit {
         } else {
           this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u},`;
         }
+        if (!this.finalSearchFieldList.find(x => x.columnName === u)) {
+          this.finalSearchFieldList.push({
+            columnName: u,
+            tablename: this.tablename
+          });
+        }
       });
     } else {
       this.selectedFieldnames.forEach((u, index) => {
         if (index === this.selectedFieldnames.length - 1) {
-          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}`;
+          this.generatedQuery = `${this.generatedQuery} ${u}`;
         } else {
-          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias},`;
+          this.generatedQuery = `${this.generatedQuery} ${u},`;
+        }
+        if (!this.finalSearchFieldList.find(x => x.columnName === u)) {
+          this.finalSearchFieldList.push({
+            columnName: u,
+            tablename: this.tablename
+          });
         }
       });
     }
@@ -166,6 +180,14 @@ export class DbMapperComponent implements OnInit {
       value: this.generatedQuery,
       action: 'query'
     });
+  }
+
+  removeField(val) {
+    this.finalSearchFieldList.splice(this.finalSearchFieldList.findIndex(u => u.columnName === val), 1);
+  }
+
+  removeParam(val) {
+    this.searchFieldList.splice(this.searchFieldList.findIndex(u => u.param === val), 1);
   }
 
   undoAction() {
@@ -177,7 +199,6 @@ export class DbMapperComponent implements OnInit {
     this.actionList.splice(this.actionList.length - 1, 1);
     this.generatedQuery = this.actionList[this.actionList.length - 1].value;
   }
-
 
   savedb(): void {
     this.loading = true;
@@ -278,6 +299,46 @@ export class DbMapperComponent implements OnInit {
       }
     );
   }
+
+  saveQuery() {
+    this.loading = true;
+    const data = {
+      query: this.generatedQuery,
+      queryFields: this.searchFieldList,
+      selectedFields: this.finalSearchFieldList
+    };
+
+    this.dbService.SaveQueryGenerated(data).subscribe( result => {
+        if (result.result === 100) {
+          this.notify.createMessage('info', result.message);
+          this.loading = false;
+          this.FieldList = result.data;
+        } else {
+          this.notify.createMessage('error', result.message);
+          this.loading = false;
+        }
+      },
+      error => {
+        this.notify.createMessage('error', error.message);
+        this.loading = false;
+      });
+  }
+
+  getSavedQuery() {
+    this.loading = true;
+    this.dbService.GetQueryFields().subscribe(
+      result => {
+        if (result.result === 100) {
+          this.searchFieldList = result.data.queryFields;
+          this.finalSearchFieldList = result.data.selectedFields;
+          this.generatedQuery = result.data.query.text;
+        }
+        console.log(result);
+        this.loading = false;
+      }
+    );
+  }
+
 
   generateQuery() {
     this.loading = true;

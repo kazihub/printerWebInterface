@@ -228,12 +228,32 @@
           <nz-form-item>
             <nz-form-control>
               <nz-form-label>Generated Query</nz-form-label>
-              <textarea rows="20" nz-input [(ngModel)]="generatedQuery" readonly></textarea>
+              <textarea rows="10" nz-input [(ngModel)]="generatedQuery" readonly></textarea>
             </nz-form-control>
           </nz-form-item>
           <nz-form-item>
             <nz-form-control>
-              <button nz-button nzType="primary" (click)="generateQuery()">Save Query</button>
+              <nz-form-label>Selected Fields</nz-form-label>
+              <div>
+                <nz-tag *ngFor="let item of finalSearchFieldList" [nzColor]="'geekblue'" nzMode="closeable" (nzOnClose)="removeField(item.columnName)">
+                  {{item.columnName}}
+                </nz-tag>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Query Param</nz-form-label>
+              <div>
+                <nz-tag *ngFor="let item of searchFieldList" [nzColor]="'geekblue'" nzMode="closeable" (nzOnClose)="removeParam(item.param)">
+                  {{item.param}}
+                </nz-tag>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" (click)="saveQuery()">Save Query</button>
             </nz-form-control>
           </nz-form-item>
         </div>

@@ -33,9 +33,13 @@ export class AppService {
   }
 
   search(info): any {
-    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
+    // return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info);
   }
 
+  getParams(info): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyParams`);
+  }
 
   public uuidv4() {
     return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {

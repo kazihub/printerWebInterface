@@ -3,6 +3,8 @@ import {ResizeEvent} from 'angular-resizable-element';
 import {AppService} from '../../app.service';
 import {CdkDragEnd} from '@angular/cdk/drag-drop';
 declare var $: any;
+import * as moment from 'moment';
+
 
 @Component({
   selector: 'app-text-field',
@@ -19,11 +21,12 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Input() height = 'auto';
   @Input() underline = 'none';
   @Input() decorate = false;
-  @Input() mappedColumnName: string;
+  @Input() mappedColumnName: any[];
   @Input() hasmapping = false;
   @Input() posX: number;
   @Input() posY: number;
   @Input() hasPos = false;
+  @Input() mappinType: any;
   element: any;
   @Input() id = this.appService.uuidv4();
   @Output() elementSelected = new EventEmitter<any>();
@@ -45,6 +48,18 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   setText() {
     const ele = document.getElementById(this.id);
     this.text = ele.innerText;
+  }
+
+  formateDate() {
+    console.log(this.text.substring(0, 9), 'text check');
+    const date = moment(this.text.substring(0, 9)).format('LL');
+    if (date) {
+      console.log('true');
+      return moment(this.text.substring(0, 9)).format('yyyy-M-d');
+    } else {
+      console.log('false');
+      return moment().format('LL').toString();
+    }
   }
 
   onResizeEnd(event: ResizeEvent): void {

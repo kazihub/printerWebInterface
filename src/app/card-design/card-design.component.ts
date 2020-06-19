@@ -21,6 +21,7 @@ import {BarcodeEditorComponent} from './barcode-field/barcode-editor/barcode-edi
 import {NewTemplateComponent} from './new-template/new-template.component';
 import {NzModalService} from 'ng-zorro-antd';
 import {ElementService} from './element.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -42,6 +43,7 @@ export interface Fields {
   positionY?: any;
   hasmapping?: boolean;
   mappedColumnName?: string;
+  mappinType?: string;
   templateId?: string;
   type?: 'text' | 'image' | 'bg' | 'code';
 }
@@ -73,6 +75,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   templates: any[];
   templatename: any;
   templateId: any;
+  searchParams: Array<any> = [];
   visible = false;
   dataSource: Array<any> = [];
 
@@ -160,6 +163,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     }
   ];
 
+  searchForm: FormGroup;
   @ViewChild('textcontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
   @ViewChild('setupcontainer', { read: ViewContainerRef }) setup: ViewContainerRef;
   constructor(private resolver: ComponentFactoryResolver,
@@ -168,6 +172,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
               private baseService: BaseService,
               private appService: AppService,
               private modalService: NzModalService,
+              private formBuilder: FormBuilder,
               private sanitizer: DomSanitizer) {
     baseService.currentSearch.subscribe(u => {
       this.visible = u;
@@ -184,6 +189,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.searchForm = this.formBuilder.group({});
+    this.getParams();
     this.toggleKeyMovability();
   }
 
@@ -258,7 +265,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       item.meta.text = u.text;
       item.meta.fontSize = u.fontSize;
       item.meta.hasmapping = u.hasmapping;
-
+      item.meta.mappinType = u.mappinType;
       item.meta.mappedColumnName = u.mappedColumnName;
     });
     this.componentRef.instance.XYPosition.subscribe(u => {
@@ -277,6 +284,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     if (options) {
       this.componentRef.instance.hasmapping = options.hasmapping;
       this.componentRef.instance.mappedColumnName = options.mappedColumnName;
+      this.componentRef.instance.mappinType = options.mappinType;
       this.componentRef.instance.hasPos = hasPos;
       this.componentRef.instance.text = options.text;
       this.componentRef.instance.fontWeight = options.fontWeight;
@@ -308,6 +316,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           positionX: this.componentRef.instance.posX,
           positionY:  this.componentRef.instance.posY,
           hasmapping: this.componentRef.instance.hasmapping,
+          mappinType: this.componentRef.instance.mappinType,
           mappedColumnName: this.componentRef.instance.mappedColumnName,
           type: 'text'
         }
@@ -444,8 +453,13 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.setupRef.instance.fontStyle = comp.instance.fontStyle;
     this.setupRef.instance.underline = comp.instance.underline;
     this.setupRef.instance.decorate = comp.instance.decorate;
+    this.setupRef.instance.mappinType = comp.instance.mappinType;
     this.setupRef.instance.hasmapping = comp.instance.hasmapping;
-    this.setupRef.instance.mappedColumnName = comp.instance.mappedColumnName;
+    if (!comp.instance.mappinType) {
+      this.setupRef.instance.mappedColumnName = comp.instance.mappedColumnName;
+    } else {
+      this.setupRef.instance.mappedColumnName = JSON.parse(comp.instance.mappedColumnName);
+    }
     this.setupRef.instance.OnSubmit.subscribe(u => {
       console.log(u);
       comp.instance.text = u.text;
@@ -455,6 +469,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       comp.instance.decorate = u.decorate;
       comp.instance.underline = u.underline;
       comp.instance.hasmapping = u.hasmapping;
+      comp.instance.mappinType = u.mappinType;
       comp.instance.mappedColumnName = u.mappedColumnName;
       const item = this.list.find(x => x.ref === this.currentRef);
       item.meta.fontWeight = u.fontWeight;
@@ -463,6 +478,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       item.meta.decorate = u.decorate;
       item.meta.underline = u.underline;
       item.meta.text = u.text;
+      item.meta.mappinType = u.mappinType;
       item.meta.mappedColumnName = u.mappedColumnName;
       item.meta.hasmapping = u.hasmapping;
       this.notify.createMessage('info', 'Applied successfully');
@@ -524,15 +540,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.currentSetupRef = this.setupRef;
   }
 
-  OpenImageEditor(
-    comp: ComponentRef<any>,
-    setupRef?: ComponentRef<any>,
-    list?: Array<any>,
-    current?: any,
-    currentSetupRef?: ComponentRef<any>,
-    resolver?: ComponentFactoryResolver,
-    setup?: ViewContainerRef
-    ): void {
+  OpenImageEditor(comp: ComponentRef<any>): void {
     if (this.currentSetupRef) {
       this.currentSetupRef.destroy();
     }
@@ -541,6 +549,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.setupRef.instance.src = comp.instance.src;
     this.setupRef.instance.width = comp.instance.width;
     this.setupRef.instance.height = comp.instance.height;
+    this.setupRef.instance.mappedColumnName = comp.instance.mappedColumnName;
+    this.setupRef.instance.hasmapping = comp.instance.hasmapping;
     this.setupRef.instance.OnSubmit.subscribe(u => {
       comp.instance.src = u.src;
       comp.instance.width = u.width;
@@ -666,6 +676,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
                 positionY:  u.positionY,
                 mappedColumnName: u.mappedColumnName,
                 hasmapping: u.hasmapping,
+                mappinType: u.mappinType,
                 templateId: u.templateId,
                 type: u.type
               }, true);
@@ -677,6 +688,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
                 positionX: u.positionX,
                 positionY:  u.positionY,
                 templateId: u.templateId,
+                mappedColumnName: u.mappedColumnName,
+                hasmapping: u.hasmapping,
                 type: u.type
               }, true);
             } else if (u.type === 'code') {
@@ -718,6 +731,38 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     ele.style.display = 'block';
   }
 
+  searchQueryParams() {
+    const param = [];
+    this.searchParams.forEach(u => {
+      param.push({
+        field: {
+          field: u.field,
+          param: u.param
+        },
+        value: this.searchForm.get(u.field).value
+      });
+    });
+
+    this.appService.search(param).subscribe(
+      u => {
+        console.log(u);
+        if (u.result === 100) {
+          this.DataTable = u.data;
+          const data = Object.keys(this.DataTable[0]);
+          console.log(data);
+          data.forEach((x, i) => {
+            this.dataSource.push({
+              field: x.toUpperCase(),
+              value: this.DataTable[0][Object.keys(this.DataTable[0])[i]]
+            });
+          });
+          console.log(this.dataSource);
+          this.loading = false;
+        }
+      }
+    );
+  }
+
   searchQuery() {
     this.loading = true;
     this.dataSource = [];
@@ -739,11 +784,36 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getParams() {
+    this.appService.getParams({search: this.search}).subscribe(
+      result => {
+        if (result.result === 100 ) {
+          this.searchParams = result.data;
+          this.searchParams.forEach(u => {
+            this.searchForm.addControl(u.field, new FormControl(null, Validators.required));
+          });
+        }
+      }
+    );
+  }
+
   Apply() {
+    let item = '';
     this.list.forEach(u => {
       if (u.meta.mappedColumnName) {
-        console.log(u.meta.mappedColumnName);
-        u.ref.instance.text =  this.dataSource.find(x => x.field === u.meta.mappedColumnName.toUpperCase())?.value;
+        if (u.meta.type === 'text') {
+          const data = JSON.parse(u.meta.mappedColumnName);
+          data.forEach(x => {
+            item = `${item} ${this.dataSource.find(z => z.field === x.toUpperCase())?.value}`;
+          });
+          console.log(item, 'item');
+          u.ref.instance.text =  item;
+          item = '';
+        } else if (u.meta.type === 'image') {
+          u.ref.instance.src = this.dataSource.find(z => z.field === u.meta.mappedColumnName.toUpperCase())?.value;
+        } else {
+          u.ref.instance.text = this.dataSource.find(z => z.field === u.meta.mappedColumnName.toUpperCase())?.value;
+        }
       }
     });
   }

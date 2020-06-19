@@ -110,12 +110,15 @@
     </div>
   </div>
   <nz-drawer [nzVisible]="visible" nzPlacement="right" nzTitle="Search" (nzOnClose)="close()" [nzMask]="false" [nzWidth]="400">
-    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-      <input type="text" [(ngModel)]="search" nz-input placeholder="input search text" />
-    </nz-input-group>
-    <ng-template #suffixIconButton>
-      <button nz-button nzType="primary" *ngIf="search" (click)="searchQuery()" nzSearch><i nz-icon nzType="search"></i></button>
-    </ng-template>
+   <form [formGroup]="searchForm">
+     <nz-form-item *ngFor="let item of searchParams">
+       <nz-form-control>
+         <nz-form-label>{{item.param}}</nz-form-label>
+         <input nz-input formControlName="{{item.field}}" type="text">
+       </nz-form-control>
+     </nz-form-item>
+   </form>
+    <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
     <ng-container *ngFor="let item of dataSource">
       <nz-form-control>
         <nz-form-label>{{item.field}}</nz-form-label>

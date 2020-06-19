@@ -26,11 +26,24 @@ export class DbService {
   getOnlyFields(): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyFields`);
   }
+
   getFields(info): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetFields/${info}`);
   }
 
   saveQuery(info): any {
     return this.httpClient.post(`${this.baseService.getBaseUrl()}App/SaveQuery`, info);
+  }
+
+  SaveQueryGenerated(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/SaveQueryGenerated`, info);
+  }
+
+  GetQueryFields(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetQueryFields`);
+  }
+
+  getQueryFields(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetQueryFields`);
   }
 }

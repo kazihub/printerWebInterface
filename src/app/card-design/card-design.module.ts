@@ -7,7 +7,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import { TextFieldComponent } from './text-field/text-field.component';
 import { TextFieldEditorComponent } from './text-field/text-field-editor/text-field-editor.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ImageFieldComponent } from './image-field/image-field.component';
 import {ResizableModule} from 'angular-resizable-element';
 import { ImageEditorComponent } from './image-field/image-editor/image-editor.component';
@@ -16,6 +16,7 @@ import { BarcodeFieldComponent } from './barcode-field/barcode-field.component';
 import { BarcodeEditorComponent } from './barcode-field/barcode-editor/barcode-editor.component';
 import {NgxBarcode6Module} from 'ngx-barcode6';
 import { NewTemplateComponent } from './new-template/new-template.component';
+import {MomentModule} from 'ngx-moment';
 
 
 @NgModule({
@@ -28,7 +29,9 @@ import { NewTemplateComponent } from './new-template/new-template.component';
     FormsModule,
     ResizableModule,
     NgxPrintModule,
-    NgxBarcode6Module
+    NgxBarcode6Module,
+    ReactiveFormsModule,
+    MomentModule
   ],
   entryComponents: [TextFieldEditorComponent, NewTemplateComponent]
 })
