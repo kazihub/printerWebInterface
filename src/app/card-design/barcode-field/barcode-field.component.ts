@@ -12,7 +12,6 @@ export class BarcodeFieldComponent implements OnInit, AfterViewInit {
   @Input() text: any;
   @Input() width = 2;
   @Input() height = 30;
-  background = '#ffffff';
   @Input() posX: any;
   @Input() posY: any;
   @Input() hasPos = false;

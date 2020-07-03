@@ -64,6 +64,9 @@ export class DbMapperComponent implements OnInit {
               private notify: NotifyService) { }
 
   ngOnInit(): void {
+    if (this.baseService.getUserRole() !== 'Administrator') {
+      this.router.navigate(['/card-design']);
+    }
     this.form = this.fb.group({
       server: [null, Validators.required],
       catalog: [null, Validators.required],

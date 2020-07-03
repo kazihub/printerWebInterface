@@ -75,6 +75,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   templates: any[];
   templatename: any;
   templateId: any;
+  newTemplate = false;
   searchParams: Array<any> = [];
   visible = false;
   dataSource: Array<any> = [];
@@ -82,7 +83,10 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   mainControls = [
     {
       icon: 'folder',
-      handle: (u) => u.click(),
+      handle: (u) => {
+        u.click();
+        this.selectTemp(this.templatename);
+      },
       hasElement: true,
       disabled: false,
       tooltip: 'select background'
@@ -184,6 +188,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     if (this.baseService.getUserRole() !== 'Administrator') {
       this.textControls.forEach(u => u.disabled = true);
       this.mainControls.forEach(u => u.disabled = true);
+      this.elementsControls.forEach(u => u.disabled = true);
+      this.newTemplate = true;
       this.disableEditing();
     }
   }
@@ -204,33 +210,52 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       this.selected.push({id: this.current});
       if (e.which === 38) {
         $('#' + this.current).animate({
-          top: '-=2'
+          top: '-=1'
         }).finish();
-        item.meta.positionY =  parseFloat(item.meta.positionY) - 2;
+        item.meta.positionY =  parseFloat(item.meta.positionY) - 1;
         this.yposition = item.meta.positionY;
       }
       if (e.which === 40) {
         $('#' + this.current).animate({
-          top: '+=2'
+          top: '+=1'
         }).finish();
-        item.meta.positionY =  parseFloat(item.meta.positionY) + 2;
+        item.meta.positionY =  parseFloat(item.meta.positionY) + 1;
         this.yposition = item.meta.positionY;
       }
       if (e.which === 37) {
         $('#' + this.current).animate({
-          left: '-=2'
+          left: '-=1'
         }).finish();
-        item.meta.positionX =  parseFloat(item.meta.positionX) - 2;
+        item.meta.positionX =  parseFloat(item.meta.positionX) - 1;
         this.xposition = item.meta.positionX;
       }
       if (e.which === 39) {
         $('#' + this.current).animate({
-          left: '+=2'
+          left: '+=1'
         }).finish();
-        item.meta.positionX =  parseFloat(item.meta.positionX) + 2;
+        item.meta.positionX =  parseFloat(item.meta.positionX) + 1;
         this.xposition = item.meta.positionX;
       }
     });
+  }
+
+  print(value) {
+    this.loading = true;
+    this.appService.PrintCount().subscribe(
+      u => {
+        if (u.result === 100) {
+          this.loading = false;
+          this.printimage = !this.printimage;
+          value.click();
+          this.selectTemp(this.templatename);
+        } else {
+          this.loading = false;
+        }
+      }
+    );
+  }
+
+  cancel() {
   }
 
   toggleSearch() {
@@ -733,6 +758,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   searchQueryParams() {
     const param = [];
+    this.dataSource = [];
     this.searchParams.forEach(u => {
       param.push({
         field: {
@@ -785,6 +811,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   getParams() {
+    this.searchParams = [];
     this.appService.getParams({search: this.search}).subscribe(
       result => {
         if (result.result === 100 ) {
@@ -846,6 +873,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       } else if (u.type === 'text') {
         this.createTextField({
           fontWeight: u.fontWeight,
+          fontSize: u.fontSize,
           fontStyle: u.fontStyle,
           decorate: u.decorate,
           underline: u.underline,
@@ -854,6 +882,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           positionY:  u.positionY,
           mappedColumnName: u.mappedColumnName,
           hasmapping: u.hasmapping,
+          mappinType: u.mappinType,
           templateId: u.templateId,
           type: u.type
         }, true);
@@ -865,6 +894,9 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           positionX: u.positionX,
           positionY:  u.positionY,
           templateId: u.templateId,
+          mappedColumnName: u.mappedColumnName,
+          hasmapping: u.hasmapping,
+          mappinType: u.mappinType,
           type: u.type
         }, true);
       } else if (u.type === 'code') {
@@ -877,6 +909,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           mappedColumnName: u.mappedColumnName,
           templateId: u.templateId,
           hasmapping: u.hasmapping,
+          mappinType: u.mappinType,
           type: u.type
         }, true);
       }

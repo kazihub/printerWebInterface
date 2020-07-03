@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 
 
-const baseUrL = 'https://localhost:44367/api/';
+// const baseUrL = 'https://localhost:44367/api/';
+//
+const baseUrL = 'http://192.168.0.244:2029/api/';
+
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +48,7 @@ export class BaseService {
   }
 
   setSessionData(data: any): void {
-    localStorage.setItem('tripsession', JSON.stringify(data));
+    localStorage.setItem('static-keyc-ghjty', JSON.stringify(data));
   }
 
   getUserPermission(): any {
@@ -56,14 +59,14 @@ export class BaseService {
   }
 
   getSesstionData(): any {
-    if (localStorage.getItem('tripsession')) {
-      return JSON.parse(localStorage.getItem('tripsession'));
+    if (localStorage.getItem('static-keyc-ghjty')) {
+      return JSON.parse(localStorage.getItem('static-keyc-ghjty'));
     }
     return false;
   }
 
   clearSeData(): void {
-    localStorage.removeItem('tripsession');
+    localStorage.removeItem('static-keyc-ghjty');
     this.router.navigate(['/login']);
   }
 

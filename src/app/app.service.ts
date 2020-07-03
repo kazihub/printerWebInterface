@@ -16,6 +16,10 @@ export class AppService {
     return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplateData', info);
   }
 
+  PrintCount(): any {
+    return this.httpClient.get(this.baseService.getBaseUrl() + 'App/PrintCount');
+  }
+
   get(): any {
     return this.httpClient.get(this.baseService.getBaseUrl() + 'App/GetTemplateData');
   }
@@ -39,6 +43,10 @@ export class AppService {
 
   getParams(info): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyParams`);
+  }
+
+  getTotalPrinted(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/TotalPrinted`);
   }
 
   public uuidv4() {

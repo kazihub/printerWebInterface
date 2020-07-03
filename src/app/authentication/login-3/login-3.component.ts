@@ -13,7 +13,7 @@ import {BaseService} from '../../utilities/base.service';
 export class Login3Component implements OnInit{
   loginForm: FormGroup;
   loginClick = false;
-
+  date = new Date();
   constructor(private fb: FormBuilder,
               private router: Router,
               private baseService: BaseService,
@@ -36,7 +36,11 @@ export class Login3Component implements OnInit{
           this.notify.createMessage('info', result.message);
           this.setUserData(result.data);
           this.loginClick = false;
-          this.router.navigate(['/dashboard']);
+          if (this.baseService.getUserRole() !== 'Administrator') {
+            this.router.navigate(['/card-design']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
         } else {
           this.notify.createMessage('error', result.message);
           this.loginClick = false;

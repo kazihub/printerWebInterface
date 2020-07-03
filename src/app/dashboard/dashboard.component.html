@@ -1,1 +1,31 @@
-<p>Dashboard Component Works!</p>
+<nz-card>
+  <nz-row [nzGutter]="16">
+    <nz-col [nzSpan]="12">
+      <nz-statistic [nzValue]="(total | number)!" [nzTitle]="'Total Cards Printed'"></nz-statistic>
+    </nz-col>
+    <nz-col [nzSpan]="12">
+      <nz-statistic [nzValue]="(today | number)!" [nzTitle]="'Cards Printed (TODAY)'"></nz-statistic>
+    </nz-col>
+  </nz-row>
+</nz-card>
+<nz-card>
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h2 class="m-b-0">WEEK</h2>
+      <p class="m-b-0 text-muted">{{WeekNumber}}</p>
+    </div>
+    <div>
+      <nz-tag [nzColor]="'cyan'">{{todayDate | amDateFormat: 'LL'}}</nz-tag>
+    </div>
+  </div>
+  <div class="m-t-50" style="height: 360px">
+    <canvas ngChartjs
+            [datasets]="ChartData"
+            [labels]="ChartLabel"
+            [options]="ChartOptions"
+            [colors]="ChartColors"
+            [legend]="false"
+            [chartType]="'bar'">
+    </canvas>
+  </div>
+</nz-card>

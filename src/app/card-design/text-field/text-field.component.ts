@@ -52,13 +52,13 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
 
   formateDate() {
     console.log(this.text.substring(0, 9), 'text check');
-    const date = moment(this.text.substring(0, 9)).format('LL');
+    const date = moment(this.text).format('yyyy-MM-DD');
     if (date) {
       console.log('true');
-      return moment(this.text.substring(0, 9)).format('yyyy-M-d');
+      return moment(this.text).format('yyyy-MM-DD');
     } else {
       console.log('false');
-      return moment().format('LL').toString();
+      return moment().format('yyyy-MM-DD').toString();
     }
   }
 
