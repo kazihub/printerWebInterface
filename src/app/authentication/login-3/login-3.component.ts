@@ -4,6 +4,9 @@ import {Router} from '@angular/router';
 import {AuthService} from '../authentication.service';
 import {NotifyService} from '../../notify.service';
 import {BaseService} from '../../utilities/base.service';
+import {NewTemplateComponent} from '../../card-design/new-template/new-template.component';
+import {NzModalService} from 'ng-zorro-antd';
+import {IpAddressComponent} from '../../ip-address/ip-address.component';
 
 
 @Component({
@@ -16,6 +19,7 @@ export class Login3Component implements OnInit{
   date = new Date();
   constructor(private fb: FormBuilder,
               private router: Router,
+              private modalService: NzModalService,
               private baseService: BaseService,
               private authService: AuthService,
               private notify: NotifyService) {
@@ -26,6 +30,16 @@ export class Login3Component implements OnInit{
       email: [ null, [ Validators.required ] ],
       password: [ null, [ Validators.required ] ]
     });
+
+    if (!this.baseService.getSesstion('static-ip-val-etteyesgh')) {
+      this.modalService.create({
+        nzTitle: 'Set Api IP',
+        nzFooter: null,
+        nzClosable: false,
+        nzMaskClosable: false,
+        nzContent: IpAddressComponent
+      });
+    }
   }
 
   login(): void {

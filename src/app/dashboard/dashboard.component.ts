@@ -118,9 +118,9 @@ export class DashboardComponent implements OnInit {
                 private colorConfig: ThemeConstantService) { }
 
     ngOnInit(): void {
-      if (this.baseService.getUserRole() !== 'Administrator') {
-        this.router.navigate(['/card-design']);
-      }
+      // if (this.baseService.getUserRole() !== 'Administrator') {
+      //   this.router.navigate(['/card-design']);
+      // }
       this.loading = true;
       this.appService.getTotalPrinted().subscribe(
         u => {

@@ -35,6 +35,12 @@
           <button nz-button nz-tooltip nzTooltipTitle="process for printing" [disabled]="list.length === 0" nzType="primary" (click)="printStuff()">
             <i nz-icon nzType="caret-right" nzTheme="outline"></i>
           </button>
+          <button nz-button nzType="primary" (click)="onRulerShow()" [disabled]="hideRUlerBtn">
+            <i nz-icon nzType="line" nzTheme="outline"></i><span>{{rulerText}}</span>
+          </button>
+          <button nz-button nzType="primary" (click)="selectTemp(templatename)">
+            <span>Clear</span>
+          </button>
         </nz-button-group>
         <nz-button-group class="m-l-20">
           <ng-container *ngFor="let control of elementsControls">
@@ -71,20 +77,18 @@
        <input nz-tooltip nzTooltipTitle="current item position on the y axis" type="text" nz-input value="Y: {{yposition}}" style="width:20%;" readonly />
      </nz-input-group>
    </div>
-    <h1>{{templatename}} Template
-    </h1>
   </div>
 </div>
 <nz-spin [nzSpinning]="loading">
   <div class="container-fluid">
     <div class="row m-t-10">
-      <div class="col-2">
-        <nz-card nzTitle="Available Templates">
-          <button nz-button nzBlock nzType="primary" class="m-b-20" *ngFor="let item of templates" (click)="selectTemp(item.name)">
-            {{item.name}}
-          </button>
-        </nz-card>
-      </div>
+<!--      <div class="col-2">-->
+<!--        <nz-card nzTitle="Available Templates">-->
+<!--          <button nz-button nzBlock nzType="primary" class="m-b-20" *ngFor="let item of templates" (click)="selectTemp(item.name)">-->
+<!--            {{item.name}}-->
+<!--          </button>-->
+<!--        </nz-card>-->
+<!--      </div>-->
       <div class="col-6">
         <div class="row">
           <div class="col-12">
@@ -93,6 +97,8 @@
                 <div style="position: absolute; top: 0; bottom: 0; left: 0;right: 0; z-index: 999;" [ngStyle]="{'display': edit? 'none':'block'}" id="disableOverlay"></div>
                 <div class="example-boundary" id="printsection">
                   <template #textcontainer></template>
+                  <app-horizontal-ruler [hidden]="!showRulers" #hruler ></app-horizontal-ruler>
+                  <app-vertical-ruler [hidden]="!showRulers" #vruler></app-vertical-ruler>
                 </div>
               </div>
             </nz-spin>
@@ -109,7 +115,10 @@
       </div>
     </div>
   </div>
-  <nz-drawer [nzVisible]="visible" nzPlacement="right" nzTitle="Search" (nzOnClose)="close()" [nzMask]="false" [nzWidth]="400">
+  <nz-drawer [nzVisible]="visible" [nzClosable]="true" nzPlacement="right" nzTitle="Search"
+             (nzOnClose)="close()"
+             [nzBodyStyle] = "{'background-color': '#bdbdbd' }"
+             [nzWidth]="600">
    <form [formGroup]="searchForm">
      <nz-form-item *ngFor="let item of searchParams">
        <nz-form-control>
@@ -119,12 +128,27 @@
      </nz-form-item>
    </form>
     <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
-    <ng-container *ngFor="let item of dataSource">
-      <nz-form-control>
-        <nz-form-label>{{item.field}}</nz-form-label>
-        <input nz-input [value]="item.value" type="text" readonly>
-      </nz-form-control>
-    </ng-container>
+    <div class="container-fluid">
+      <div class="row" *ngFor="let item of dataSource">
+        <div class="col-8">
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label *ngIf="item.alias">{{item.alias}}</nz-form-label>
+              <nz-form-label *ngIf="!item.alias">{{item.field}}</nz-form-label>
+              <input nz-input [(ngModel)]="item.value" type="text" [readOnly]="!item.readOnly">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-4">
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Allow Edit</nz-form-label>
+              <label nz-checkbox [(ngModel)]="item.readOnly"></label>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
     <button nz-button nzType="primary" (click)="Apply()" *ngIf="dataSource.length > 0">Apply</button>
   </nz-drawer>
 </nz-spin>

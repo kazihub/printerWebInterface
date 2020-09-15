@@ -28,26 +28,34 @@ export class SideNavComponent implements OnInit{
       title: 'Card Design',
       iconType: 'nzIcon',
       iconTheme: 'outline',
-      icon: 'dashboard',
+      icon: 'idcard',
       submenu: []
     },
     {
       path: '/db-mapper',
-      title: 'DB Mapper',
+      title: 'DB Settings',
       iconType: 'nzIcon',
       iconTheme: 'outline',
-      icon: 'dashboard',
+      icon: 'database',
       submenu: []
     }
   ];
 
   userMenu = [
     {
+      path: '/dashboard',
+      title: 'Dashboard',
+      iconType: 'nzIcon',
+      iconTheme: 'outline',
+      icon: 'dashboard',
+      submenu: []
+    },
+    {
       path: '/card-design',
       title: 'Card Design',
       iconType: 'nzIcon',
       iconTheme: 'outline',
-      icon: 'dashboard',
+      icon: 'idcard',
       submenu: []
     }
   ];

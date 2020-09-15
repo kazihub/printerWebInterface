@@ -22,6 +22,8 @@ import {NewTemplateComponent} from './new-template/new-template.component';
 import {NzModalService} from 'ng-zorro-antd';
 import {ElementService} from './element.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {HorizontalRulerComponent} from './horizontal-ruler/horizontal-ruler.component';
+import {VerticalRulerComponent} from './vertical-ruler/vertical-ruler.component';
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -74,12 +76,13 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   DataTable: any[];
   templates: any[];
   templatename: any;
+  rulerText = 'Show Ruler';
   templateId: any;
   newTemplate = false;
   searchParams: Array<any> = [];
   visible = false;
   dataSource: Array<any> = [];
-
+  showRulers = false;
   mainControls = [
     {
       icon: 'folder',
@@ -168,8 +171,12 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   ];
 
   searchForm: FormGroup;
+  hideRUlerBtn = false;
   @ViewChild('textcontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
   @ViewChild('setupcontainer', { read: ViewContainerRef }) setup: ViewContainerRef;
+
+  @ViewChild('hruler', {static: true}) horizontalRuler: HorizontalRulerComponent;
+  @ViewChild('vruler', {static: true}) verticalRuler: VerticalRulerComponent;
   constructor(private resolver: ComponentFactoryResolver,
               private notify: NotifyService,
               private element: ElementService,
@@ -190,6 +197,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       this.mainControls.forEach(u => u.disabled = true);
       this.elementsControls.forEach(u => u.disabled = true);
       this.newTemplate = true;
+      this.hideRUlerBtn = true;
       this.disableEditing();
     }
   }
@@ -198,6 +206,13 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.searchForm = this.formBuilder.group({});
     this.getParams();
     this.toggleKeyMovability();
+    this.horizontalRuler.elementSelected.subscribe(u => {
+      this.current = u.id;
+    });
+
+    this.verticalRuler.elementSelected.subscribe(u => {
+      this.current = u.id;
+    });
   }
 
   toggleKeyMovability() {
@@ -253,6 +268,15 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
         }
       }
     );
+  }
+
+  onRulerShow() {
+    this.showRulers = !this.showRulers;
+    if (this.showRulers) {
+      this.rulerText = 'Hide Ruler';
+    } else {
+      this.rulerText = 'Show Ruler';
+    }
   }
 
   cancel() {
@@ -771,20 +795,21 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
     this.appService.search(param).subscribe(
       u => {
-        console.log(u);
-        if (u.result === 100) {
-          this.DataTable = u.data;
-          const data = Object.keys(this.DataTable[0]);
-          console.log(data);
-          data.forEach((x, i) => {
-            this.dataSource.push({
-              field: x.toUpperCase(),
-              value: this.DataTable[0][Object.keys(this.DataTable[0])[i]]
-            });
+        this.DataTable = u.search.data;
+        const selected = u.selectedFields.data;
+        console.log('sel', this.selected);
+        const data = Object.keys(this.DataTable[0]);
+        console.log(data);
+        data.forEach((x, i) => {
+          this.dataSource.push({
+            field: x.toUpperCase(),
+            value: this.DataTable[0][Object.keys(this.DataTable[0])[i]],
+            readOnly: false,
+            alias: selected.find(s => s.columnName.toUpperCase() === x.toUpperCase())?.alias
           });
-          console.log(this.dataSource);
-          this.loading = false;
-        }
+        });
+        console.log(this.dataSource);
+        this.loading = false;
       }
     );
   }
@@ -812,7 +837,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   getParams() {
     this.searchParams = [];
-    this.appService.getParams({search: this.search}).subscribe(
+    this.appService.getParams().subscribe(
       result => {
         if (result.result === 100 ) {
           this.searchParams = result.data;

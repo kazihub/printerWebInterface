@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {BaseService} from './utilities/base.service';
+import {forkJoin} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,10 +39,13 @@ export class AppService {
 
   search(info): any {
     // return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
-    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info);
+    return forkJoin({
+      search: this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info),
+      selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'App/getOnlyFields/')
+    });
   }
 
-  getParams(info): any {
+  getParams(): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyParams`);
   }
 

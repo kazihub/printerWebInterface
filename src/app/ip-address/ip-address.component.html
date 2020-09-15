@@ -1,0 +1,11 @@
+<nz-form-item>
+  <nz-form-label nzRequired>API IP Address mapping</nz-form-label>
+  <nz-form-control>
+    <input nz-input [(ngModel)]="IPAddress">
+  </nz-form-control>
+</nz-form-item>
+<nz-form-item>
+  <nz-form-control>
+    <button nz-button class="login-form-button" (click)="close()" [nzType]="'primary'">Set IP</button>
+  </nz-form-control>
+</nz-form-item>

@@ -1,10 +1,16 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {BaseService} from '../utilities/base.service';
 import {AuthService} from '../authentication/authentication.service';
 import {NotifyService} from '../notify.service';
 import {DbService} from './db.service';
+import {IpAddressComponent} from '../ip-address/ip-address.component';
+import {NzModalService} from 'ng-zorro-antd';
+import {AliasComponent} from './alias/alias.component';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 
 export interface Action {
   value?: string;
@@ -19,6 +25,8 @@ export interface Action {
 })
 export class DbMapperComponent implements OnInit {
   form: FormGroup;
+  realloading = false;
+  dataSource: any;
   loading = false;
   TableList: any[];
   useTableAlias = false;
@@ -35,30 +43,34 @@ export class DbMapperComponent implements OnInit {
     'LEFT JOIN',
     'FULL JOIN'
   ];
+  displayedColumns: string[] = [
+    'Name',
+    'Current',
+    'action'
+  ];
+  allDb: Array<any> = [];
   constant: any;
   tableAlias: any;
   fieldAlias: any;
-  TableList2: any[];
   FieldList: any[];
   FieldList2: any[];
   AliasList: Array<any> = [];
-  hasDependant = false;
-  useDependantFields = false;
   searchField: any;
   searchFieldList: Array<any> = [];
   finalSearchFieldList: Array<any> = [];
   DependantsearchField: any;
-  primaryKey: any;
-  DependantForeignKey: any;
-  customQuery: any;
   generatedQuery = '';
   actionList: Array<Action> = [];
   @Input() tablename: any;
   @Input() Depentdanttablename: any;
   @Input() selectedFieldnames: any[];
   @Input() DependantselectedFieldnames: any[];
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(private fb: FormBuilder,
               private router: Router,
+              private modalService: NzModalService,
               private baseService: BaseService,
               private dbService: DbService,
               private notify: NotifyService) { }
@@ -68,13 +80,31 @@ export class DbMapperComponent implements OnInit {
       this.router.navigate(['/card-design']);
     }
     this.form = this.fb.group({
+      name: [null, Validators.required],
       server: [null, Validators.required],
       catalog: [null, Validators.required],
       user: [null, Validators.required],
       pass: [null, Validators.required]
     });
-    // this.getQuery();
     this.getSavedQuery();
+    this.getAll();
+  }
+
+  getAll() {
+    this.realloading = true;
+    this.dbService.getAllDB().subscribe(
+      result => {
+        if (result.result === 100) {
+          this.allDb = result.data;
+          this.dataSource = new MatTableDataSource<any>(
+            this.allDb
+          );
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        }
+        this.realloading = false;
+      }
+    );
   }
 
   addConstToQuery() {
@@ -193,6 +223,20 @@ export class DbMapperComponent implements OnInit {
     this.searchFieldList.splice(this.searchFieldList.findIndex(u => u.param === val), 1);
   }
 
+  updateAlias(val) {
+    const modal = this.modalService.create({
+      nzTitle: 'Set Alias',
+      nzFooter: null,
+      nzContent: AliasComponent
+    });
+
+    modal.afterClose.subscribe(u => {
+      if (u) {
+        this.finalSearchFieldList.find(x => x.columnName === val).alias = u;
+      }
+    });
+  }
+
   undoAction() {
     this.generatedQuery = '';
     const data = this.actionList[this.actionList.length - 1];
@@ -243,26 +287,6 @@ export class DbMapperComponent implements OnInit {
     );
   }
 
-  getDependantTables(): void {
-    this.loading = true;
-    this.dbService.getTables().subscribe(
-      result => {
-        if (result.result === 100) {
-          this.notify.createMessage('info', result.message);
-          this.loading = false;
-          this.TableList2 = result.data;
-        } else {
-          this.notify.createMessage('error', result.message);
-          this.loading = false;
-        }
-      },
-      error => {
-        this.notify.createMessage('error', error.message);
-        this.loading = false;
-      }
-    );
-  }
-
   getFields(): void {
     this.loading = true;
     this.dbService.getFields(this.tablename).subscribe(
@@ -271,26 +295,6 @@ export class DbMapperComponent implements OnInit {
           this.notify.createMessage('info', result.message);
           this.loading = false;
           this.FieldList = result.data;
-        } else {
-          this.notify.createMessage('error', result.message);
-          this.loading = false;
-        }
-      },
-      error => {
-        this.notify.createMessage('error', error.message);
-        this.loading = false;
-      }
-    );
-  }
-
-  getDependantFields(): void {
-    this.loading = true;
-    this.dbService.getFields(this.Depentdanttablename).subscribe(
-      result => {
-        if (result.result === 100) {
-          this.notify.createMessage('info', result.message);
-          this.loading = false;
-          this.FieldList2 = result.data;
         } else {
           this.notify.createMessage('error', result.message);
           this.loading = false;
@@ -342,149 +346,7 @@ export class DbMapperComponent implements OnInit {
     );
   }
 
-
-  generateQuery() {
-    this.loading = true;
-    const data = [];
-    if (!this.tablename) {
-      this.notify.createMessage('info', 'please select main table name');
-      return;
-    }
-    if (!this.primaryKey) {
-      this.notify.createMessage('info', 'please select primary key');
-      return;
-    }
-    if (!this.searchField) {
-      this.notify.createMessage('info', 'please select search field');
-      return;
-    }
-    if (this.hasDependant) {
-      if (!this.DependantForeignKey) {
-        this.notify.createMessage('info', 'please select dependant foreign key');
-        return;
-      }
-      if (!this.DependantsearchField) {
-        this.notify.createMessage('info', 'please select dependant search field');
-        return;
-      }
-      if (!this.Depentdanttablename) {
-        this.notify.createMessage('info', 'please select dependant table name');
-        return;
-      }
-    }
-    if (this.useDependantFields) {
-      this.generatedQuery = 'Select';
-      this.DependantselectedFieldnames.forEach((u, index) => {
-        this.generatedQuery = `${this.generatedQuery} A.${u}`;
-      });
-      this.generatedQuery = `${this.generatedQuery} FROM ${this.Depentdanttablename} AS A INNER JOIN ${this.tablename} AS B ON A.${this.DependantForeignKey} = B.${this.primaryKey} WHERE B.${this.DependantsearchField} = '${this.searchField}.VALUE'`;
-    } else {
-      this.generatedQuery = 'Select';
-      this.selectedFieldnames.forEach((u, index) => {
-        this.generatedQuery = `${this.generatedQuery} ${u}`;
-      });
-      this.generatedQuery = `${this.generatedQuery} FROM ${this.tablename} WHERE ${this.searchField} = ${this.searchField}.value;`;
-    }
-
-    if (this.selectedFieldnames.length > 0) {
-      this.selectedFieldnames.forEach((u, index) => {
-        data.push({
-          columnName: u,
-          isDependantField: false
-        });
-      });
-    }
-
-    if (this.DependantselectedFieldnames.length > 0) {
-      this.DependantselectedFieldnames.forEach((u, index) => {
-        data.push({
-          columnName: u,
-          isDependantField: true
-        });
-      });
-    }
-
-    const value = {
-      table: {
-        name: this.tablename,
-        dependantTableName: this.Depentdanttablename,
-        hasDependant: this.hasDependant,
-        useDependantFields: this.useDependantFields,
-        dependantSearchField: this.DependantsearchField,
-        searchField: this.searchField,
-        primaryKey: this.primaryKey,
-        dependantForeignKey: this.DependantForeignKey
-      },
-      fields: data
-    };
-
-    console.log(value);
-
-    this.dbService.saveQuery(value).subscribe(
-      result => {
-        if (result.result === 100) {
-          this.notify.createMessage('info', result.message);
-          this.loading = false;
-          this.FieldList = result.data;
-        } else {
-          this.notify.createMessage('error', result.message);
-          this.loading = false;
-        }
-      },
-      error => {
-        this.notify.createMessage('error', error.message);
-        this.loading = false;
-      }
-    );
-  }
-
-  getQuery() {
-    this.loading = true;
-    this.dbService.getQuery().subscribe(
-      result => {
-        if (result.result === 100) {
-          this.DependantselectedFieldnames = result.data.fields.filter(u => u.isDependantField === true);
-          this.selectedFieldnames = result.data.fields.filter(u => u.isDependantField === false);
-          this.DependantselectedFieldnames = this.DependantselectedFieldnames.map(u => u.columnName);
-          this.selectedFieldnames = this.selectedFieldnames.map(u => u.columnName);
-          this.getTables();
-          this.getDependantTables();
-          this.tablename = result.data.table.name;
-          this.Depentdanttablename = result.data.table.dependantTableName;
-          this.hasDependant = result.data.table.hasDependant;
-          this.useDependantFields = result.data.table.useDependantFields;
-          this.DependantForeignKey = result.data.table.dependantForeignKey;
-          this.primaryKey = result.data.table.primaryKey;
-          this.searchField = result.data.table.searchField;
-          this.DependantsearchField = result.data.table.dependantSearchField;
-          this.getFields();
-          this.getDependantFields();
-          this.notify.createMessage('info', result.message);
-
-          if (this.useDependantFields) {
-            this.generatedQuery = 'Select';
-            this.DependantselectedFieldnames.forEach((u, index) => {
-              this.generatedQuery = `${this.generatedQuery} A.${u},`;
-            });
-
-            this.generatedQuery = `${this.generatedQuery} FROM ${this.Depentdanttablename} AS A INNER JOIN ${this.tablename} AS B ON A.${this.DependantForeignKey} = B.${this.primaryKey} WHERE B.${this.DependantsearchField} = '${this.searchField}.VALUE'`;
-          } else {
-            this.generatedQuery = 'Select';
-            this.selectedFieldnames.forEach((u, index) => {
-              this.generatedQuery = `${this.generatedQuery} ${u}`;
-            });
-            this.generatedQuery = `${this.generatedQuery} FROM ${this.tablename} WHERE ${this.searchField} = ${this.searchField}.value;`;
-          }
-          this.loading = false;
-        } else {
-          this.notify.createMessage('error', result.message);
-          this.loading = false;
-        }
-      },
-      error => {
-        this.notify.createMessage('error', error.message);
-        this.loading = false;
-      }
-    );
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }

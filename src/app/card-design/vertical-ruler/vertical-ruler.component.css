@@ -1,0 +1,10 @@
+.vruler{
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: dashed 1px black;
+  background-color: rgba(246,246,246,0.89);
+  width: 25px;
+  z-index: 99999;
+  height: 60vh;
+}

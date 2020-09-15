@@ -17,10 +17,12 @@ import { BarcodeEditorComponent } from './barcode-field/barcode-editor/barcode-e
 import {NgxBarcode6Module} from 'ngx-barcode6';
 import { NewTemplateComponent } from './new-template/new-template.component';
 import {MomentModule} from 'ngx-moment';
+import { HorizontalRulerComponent } from './horizontal-ruler/horizontal-ruler.component';
+import { VerticalRulerComponent } from './vertical-ruler/vertical-ruler.component';
 
 
 @NgModule({
-  declarations: [CardDesignComponent, TextFieldComponent, TextFieldEditorComponent, ImageFieldComponent, ImageEditorComponent, BarcodeFieldComponent, BarcodeEditorComponent, NewTemplateComponent],
+  declarations: [CardDesignComponent, TextFieldComponent, TextFieldEditorComponent, ImageFieldComponent, ImageEditorComponent, BarcodeFieldComponent, BarcodeEditorComponent, NewTemplateComponent, HorizontalRulerComponent, VerticalRulerComponent],
   imports: [
     CommonModule,
     CardDesignRoutingModule,

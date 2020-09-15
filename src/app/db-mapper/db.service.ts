@@ -13,37 +13,34 @@ export class DbService {
   ) { }
 
   savedb(info): any {
-    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/DbConnect`, info);
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Db/DbConnect`, info);
   }
 
   getTables(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetTables`);
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetTables`);
   }
 
-  getQuery(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getQuery`);
+  getAllDB(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetAllDB`);
   }
+
   getOnlyFields(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyFields`);
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
   }
 
   getFields(info): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetFields/${info}`);
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetFields/${info}`);
   }
 
-  saveQuery(info): any {
-    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/SaveQuery`, info);
-  }
+  // saveQuery(info): any {
+  //   return this.httpClient.post(`${this.baseService.getBaseUrl()}Db/SaveQuery`, info);
+  // }
 
   SaveQueryGenerated(info): any {
-    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/SaveQueryGenerated`, info);
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Db/SaveQueryGenerated`, info);
   }
 
   GetQueryFields(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetQueryFields`);
-  }
-
-  getQueryFields(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetQueryFields`);
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetQueryFields`);
   }
 }

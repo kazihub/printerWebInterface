@@ -1,0 +1,10 @@
+.hruler{
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: dashed 1px black;
+  background-color: rgba(246,246,246,0.89);
+  height: 25px;
+  width: 50vw;
+  z-index: 99999;
+}

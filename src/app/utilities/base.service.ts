@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 
 
-// const baseUrL = 'https://localhost:44367/api/';
-//
-const baseUrL = 'http://192.168.0.244:2029/api/';
+const baseUrL = 'https://localhost:44367/api/';
+
+// const baseUrL = 'http://192.168.0.244:2029/api/';
 
 
 @Injectable({
@@ -44,11 +44,15 @@ export class BaseService {
   }
 
   getBaseUrl(): string {
-    return baseUrL;
+    return `${this.getSesstion('static-ip-val-etteyesgh')}/api/`;
   }
 
   setSessionData(data: any): void {
     localStorage.setItem('static-keyc-ghjty', JSON.stringify(data));
+  }
+
+  setSession(value, data: any): void {
+    localStorage.setItem(value, JSON.stringify(data));
   }
 
   getUserPermission(): any {
@@ -61,6 +65,13 @@ export class BaseService {
   getSesstionData(): any {
     if (localStorage.getItem('static-keyc-ghjty')) {
       return JSON.parse(localStorage.getItem('static-keyc-ghjty'));
+    }
+    return false;
+  }
+
+  getSesstion(value): any {
+    if (localStorage.getItem(value)) {
+      return JSON.parse(localStorage.getItem(value));
     }
     return false;
   }

@@ -18,10 +18,11 @@ import { FullLayoutComponent } from './layouts/full-layout/full-layout.component
 import { NgChartjsModule } from 'ng-chartjs';
 import { ThemeConstantService } from './shared/services/theme-constant.service';
 import {ResizableModule} from 'angular-resizable-element';
-import {NzMessageModule, NzNotificationModule} from 'ng-zorro-antd';
+import {NgZorroAntdModule, NzMessageModule, NzNotificationModule} from 'ng-zorro-antd';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpinterceptorService} from './utilities/httpinterceptor.service';
 import {NgxBarcode6Module} from 'ngx-barcode6';
+import { IpAddressComponent } from './ip-address/ip-address.component';
 
 registerLocaleData(en);
 
@@ -30,20 +31,22 @@ registerLocaleData(en);
     AppComponent,
     CommonLayoutComponent,
     FullLayoutComponent,
+    IpAddressComponent,
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    NzBreadCrumbModule,
-    TemplateModule,
-    SharedModule,
-    NgChartjsModule,
-    ResizableModule,
-    NzNotificationModule,
-    NzMessageModule,
-    NgxBarcode6Module
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        NzBreadCrumbModule,
+        TemplateModule,
+        SharedModule,
+        NgChartjsModule,
+        ResizableModule,
+        NzNotificationModule,
+        NzMessageModule,
+        NgxBarcode6Module,
+        NgZorroAntdModule
+    ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpinterceptorService, multi: true },
     {
