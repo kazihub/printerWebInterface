@@ -80,6 +80,7 @@ export class HeaderComponent implements OnInit{
     this.baseService.logout().subscribe(
       result => {
         if (result.status === 105) {
+          this.baseService.clearSeData();
           this.router.navigate(['/']);
         }
       }

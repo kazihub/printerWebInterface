@@ -1,0 +1,54 @@
+<div class="page-header">
+  <h1>Approval List</h1>
+</div>
+<nz-spin [nzSpinning]="loading">
+  <nz-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>All Users</nz-form-label>
+              <nz-select [(ngModel)]="selectedUsers" nzMode="multiple">
+                <nz-option *ngFor="let item of allUsers" nzValue="{{item.id}}" nzLabel="{{item.fullName}} ({{item.email}})"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+          <div class="m-t-40">
+            <button nz-button (click)="add()" nzType="primary" class="m-r-10">Save</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between">
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+            </mat-form-field>
+          </div>
+          <table mat-table [dataSource]="dataSource" style="width: 100%" matSort class="bordered">
+            <ng-container matColumnDef="Name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let elemant">{{elemant.fullName}}</td>
+            </ng-container>
+            <ng-container matColumnDef="Email">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+              <td mat-cell *matCellDef="let elemant">
+                {{elemant.email}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemant">
+                <button nz-button (click)="remove(elemant.id)" nzType="primary">remove user</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+</nz-spin>

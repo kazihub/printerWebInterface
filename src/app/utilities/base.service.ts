@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
+import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import {HubConnection} from '@microsoft/signalr';
+import * as signalR from '@microsoft/signalr';
+import {NotifyService} from '../notify.service';
 
 
 const baseUrL = 'https://localhost:44367/api/';
@@ -14,14 +18,15 @@ const baseUrL = 'https://localhost:44367/api/';
 })
 
 export class BaseService {
-
-  constructor(private router: Router, private httpClient: HttpClient
+  public hubConnect: HubConnection;
+  constructor(private router: Router, private httpClient: HttpClient,
+              private  notify: NotifyService
   ) { }
 
   private now: any;
 
-  private menuSource = new BehaviorSubject<string>('Main');
-  currentMenu = this.menuSource.asObservable();
+  private approveSource = new BehaviorSubject<any>({});
+  currentApproval = this.approveSource.asObservable();
 
   private nameSource = new BehaviorSubject<any>('');
   currentName = this.nameSource.asObservable();
@@ -29,8 +34,8 @@ export class BaseService {
   private searchSource = new BehaviorSubject<boolean>(false);
   currentSearch = this.searchSource.asObservable();
 
-  Menu(menu): void {
-    this.menuSource.next(menu);
+  Approval(menu): void {
+    this.approveSource.next(menu);
     // console.log(menu);
   }
   Name(name): void {
@@ -41,6 +46,28 @@ export class BaseService {
   Search(menu): void {
     this.searchSource.next(menu);
     // console.log(menu);
+  }
+
+  async ConnectNotification() {
+    if (!this.hubConnect) {
+      this.hubConnect = new signalR.HubConnectionBuilder()
+        .withUrl(`${this.getBaseUrl()}notificationHub?userId=${this.getUserData().id}`)
+        .withAutomaticReconnect()
+        .build();
+      this.hubConnect.start()
+        .then(() => {
+          console.log('connection started ...');
+        }).catch( err => {
+        console.log('Error while starting connection ' + err);
+      });
+      this.hubConnect.on('ApprovalPending', (message) => {
+        this.notify.createNotification('info', 'QUIXMO', message.message, 8000);
+        this.Approval(message.message);
+      });
+      this.hubConnect.on('ApprovalSuccess', (message) => {
+        this.Approval(message);
+      });
+    }
   }
 
   getBaseUrl(): string {
@@ -78,7 +105,6 @@ export class BaseService {
 
   clearSeData(): void {
     localStorage.removeItem('static-keyc-ghjty');
-    this.router.navigate(['/login']);
   }
 
   getToken(): any {
@@ -95,11 +121,21 @@ export class BaseService {
     return false;
   }
 
-  getBranchData(): any {
+  getPermission(): any {
     if (this.getSesstionData()) {
-      return this.getSesstionData().branch;
+      return this.getSesstionData().permission;
     }
     return false;
+  }
+
+  setPermission(perm): any {
+    if (this.getSesstionData()) {
+      const session = this.getSesstionData();
+      session.permission = perm;
+      this.clearSeData();
+      console.log(session);
+      this.setSessionData(session);
+    }
   }
 
   getUserRole(): any {
@@ -107,6 +143,10 @@ export class BaseService {
       return this.getSesstionData().role;
     }
     return false;
+  }
+
+  changePassword(info): any {
+    return this.httpClient.post(`${this.getBaseUrl()}Account/ChangePassword`, info);
   }
 
   check(): any {
@@ -117,3 +157,27 @@ export class BaseService {
     return this.httpClient.get(this.getBaseUrl() + 'Account/Logout/');
   }
 }
+
+export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+
+  if (!control.parent || !control) {
+    return null;
+  }
+
+  const password = control.parent.get('newPassword');
+  const passwordConfirm = control.parent.get('passwordConfirm');
+
+  if (!password || !passwordConfirm) {
+    return null;
+  }
+
+  if (passwordConfirm.value === '') {
+    return null;
+  }
+
+  if (password.value === passwordConfirm.value) {
+    return null;
+  }
+
+  return { passwordsNotMatching: true };
+};

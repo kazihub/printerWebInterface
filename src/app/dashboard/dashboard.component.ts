@@ -5,8 +5,8 @@ import * as moment from 'moment';
 import {BaseService} from '../utilities/base.service';
 import {Router} from '@angular/router';
 @Component({
-    selector: 'app-dashboard',
-    templateUrl: './dashboard.component.html',
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
 })
 
 export class DashboardComponent implements OnInit {
@@ -14,16 +14,28 @@ export class DashboardComponent implements OnInit {
   monthYear: any;
   total = '0';
   today = '0';
+  reprintTotal = '0';
+  reprintToday = '0';
   WeekNumber: any;
   date = new Date();
   todayDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
   currentWeek: any;
-  ChartData: Array<any> = [{
-    data: [0, 0, 0, 0, 0, 0, 0],
-    categoryPercentage: 0.35,
-    barPercentage: 0.3,
-  }];
-  weekBarData: Array<any> = [];
+  ChartData: Array<any> = [
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      label: 'Cards Printed',
+      categoryPercentage: 0.35,
+      barPercentage: 0.3,
+    },
+    {
+      data: [0, 0, 0, 0, 0, 0, 0],
+      label: 'Cards Reprinted',
+      categoryPercentage: 0.35,
+      barPercentage: 0.3,
+    }
+  ];
+  printedData: Array<any> = [];
+  reprintedData: Array<any> = [];
   selectedWeek: any;
   AllDays: string[] = [
     'SUN',
@@ -42,7 +54,6 @@ export class DashboardComponent implements OnInit {
     scales: {
       xAxes: [{
         display: true,
-        stacked: true,
         scaleLabel: {
           display: false,
           labelString: 'Month'
@@ -57,7 +68,6 @@ export class DashboardComponent implements OnInit {
       }],
       yAxes: [{
         display: true,
-        stacked: true,
         scaleLabel: {
           display: false,
           labelString: 'Value'
@@ -71,7 +81,7 @@ export class DashboardComponent implements OnInit {
           zeroLineBorderDash: [3, 4]
         },
         ticks: {
-          stepSize: 40,
+          stepSize: 10,
           display: true,
           beginAtZero: true,
           fontSize: 13,
@@ -110,59 +120,89 @@ export class DashboardComponent implements OnInit {
     {
       backgroundColor: this.blue,
       borderWidth: 0
+    },
+    {
+      backgroundColor: this.purple,
+      borderWidth: 0
     }
   ];
-    constructor(private appService: AppService,
-                private baseService: BaseService,
-                private router: Router,
-                private colorConfig: ThemeConstantService) { }
 
-    ngOnInit(): void {
-      // if (this.baseService.getUserRole() !== 'Administrator') {
-      //   this.router.navigate(['/card-design']);
-      // }
-      this.loading = true;
-      this.appService.getTotalPrinted().subscribe(
-        u => {
-          const dates = [];
-          if (u.result === 100) {
-            console.log(u.data);
-            u.data.total.forEach(x => {
-              this.total = `${parseFloat(this.total) + parseFloat(x.count)}`;
-              dates.push(new Date(x.date));
-            });
-            this.today = u.data.today.count;
-            const AllDates = this.DaysInMonth(new Date().getFullYear(), new Date().getMonth());
-            this.GetWeeks(AllDates);
-            this.selectedWeek = this.weeks.find(x => x.week === this.currentWeek);
-            this.ChartLabel = this.selectedWeek.dates.map(x => moment(x).format('LL'));
-            this.WeekNumber = this.selectedWeek.week;
-            this.selectedWeek.dates.forEach(
-              x => {
-                const comp = u.data.total.find(y =>  this.simpleDate(new Date(y.date)).getTime() === x.getTime());
-                if (comp) {
-                  this.weekBarData.push(comp.count);
-                } else {
-                  this.weekBarData.push(0);
-                }
+  doughnutChartLabels: string[] = ['Total Cards Printed', 'Total Cards Reprinted'];
+  doughnutChartData: number[] = [];
+  doughnutChartColors: Array<any> =  [{
+    backgroundColor: [this.blue, this.purple],
+    pointBackgroundColor : [this.blueLight, this.purpleLight]
+  }];
+  doughnutChartType = 'doughnut';
+  constructor(private appService: AppService,
+              private baseService: BaseService,
+              private router: Router,
+              private colorConfig: ThemeConstantService) { }
+
+  ngOnInit(): void {
+    // if (this.baseService.getUserRole() !== 'Administrator') {
+    //   this.router.navigate(['/card-design']);
+    // }
+    this.loading = true;
+    this.appService.getTotalPrinted().subscribe(
+      u => {
+        const dates = [];
+        if (u.result === 100) {
+          console.log(u.data);
+          u.data.total.forEach(x => {
+            this.total = `${parseFloat(this.total) + parseFloat(x.count)}`;
+            dates.push(new Date(x.date));
+          });
+          this.today = u.data.today?.count;
+          this.reprintTotal = u.data.reprintsCount.length;
+          this.reprintToday = u.data.todayReprints.length;
+          this.doughnutChartData.push(parseFloat(this.total));
+          this.doughnutChartData.push(parseFloat(this.reprintTotal));
+          const AllDates = this.DaysInMonth(new Date().getFullYear(), new Date().getMonth());
+          this.GetWeeks(AllDates);
+          this.selectedWeek = this.weeks.find(x => x.week === this.currentWeek);
+          this.ChartLabel = this.selectedWeek.dates.map(x => moment(x).format('LL'));
+          this.WeekNumber = this.selectedWeek.week;
+          this.selectedWeek.dates.forEach(
+            x => {
+              const comp = u.data.total.find(y =>  this.simpleDate(new Date(y.date)).getTime() === x.getTime());
+              if (comp) {
+                this.printedData.push(comp.count);
+              } else {
+                this.printedData.push(0);
               }
-            );
-            this.ChartData = [];
-            this.ChartData.push({
-              data: this.weekBarData,
-              categoryPercentage: 0.35,
-              barPercentage: 0.3,
-            });
-            this.loading = false;
-            console.log(this.weeks, this.selectedWeek, this.weekBarData, this.ChartLabel);
-          }
-        }
-      );
-    }
 
-    simpleDate(date) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
+              const rep = u.data.reprintsCount.filter(y =>  this.simpleDate(new Date(y.date)).getTime() === x.getTime());
+              if (rep) {
+                this.reprintedData.push(rep.length);
+              } else {
+                this.printedData.push(0);
+              }
+            }
+          );
+          this.ChartData = [];
+          this.ChartData.push({
+            data: this.printedData,
+            label: 'Cards Printed',
+            categoryPercentage: 0.35,
+            barPercentage: 0.3,
+          });
+          this.ChartData.push({
+            data: this.reprintedData,
+            label: 'Cards Reprinted',
+            categoryPercentage: 0.35,
+            barPercentage: 0.3,
+          });
+          this.loading = false;
+          console.log(this.weeks, this.selectedWeek, this.printedData, this.ChartLabel);
+        }
+      }
+    );
+  }
+
+  simpleDate(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
 
   private DaysInMonth(year, month): any {
     const date = new Date(year, month, 1);

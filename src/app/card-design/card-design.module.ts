@@ -19,10 +19,21 @@ import { NewTemplateComponent } from './new-template/new-template.component';
 import {MomentModule} from 'ngx-moment';
 import { HorizontalRulerComponent } from './horizontal-ruler/horizontal-ruler.component';
 import { VerticalRulerComponent } from './vertical-ruler/vertical-ruler.component';
+import { WaitingApprovalComponent } from './waiting-approval/waiting-approval.component';
 
 
 @NgModule({
-  declarations: [CardDesignComponent, TextFieldComponent, TextFieldEditorComponent, ImageFieldComponent, ImageEditorComponent, BarcodeFieldComponent, BarcodeEditorComponent, NewTemplateComponent, HorizontalRulerComponent, VerticalRulerComponent],
+  declarations: [CardDesignComponent,
+    TextFieldComponent,
+    TextFieldEditorComponent,
+    ImageFieldComponent,
+    ImageEditorComponent,
+    BarcodeFieldComponent,
+    BarcodeEditorComponent,
+    NewTemplateComponent,
+    HorizontalRulerComponent,
+    VerticalRulerComponent,
+    WaitingApprovalComponent],
   imports: [
     CommonModule,
     CardDesignRoutingModule,
@@ -35,6 +46,6 @@ import { VerticalRulerComponent } from './vertical-ruler/vertical-ruler.componen
     ReactiveFormsModule,
     MomentModule
   ],
-  entryComponents: [TextFieldEditorComponent, NewTemplateComponent]
+  entryComponents: [TextFieldEditorComponent, NewTemplateComponent, WaitingApprovalComponent]
 })
 export class CardDesignModule { }

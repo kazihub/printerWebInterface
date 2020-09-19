@@ -24,6 +24,8 @@ import {ElementService} from './element.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {HorizontalRulerComponent} from './horizontal-ruler/horizontal-ruler.component';
 import {VerticalRulerComponent} from './vertical-ruler/vertical-ruler.component';
+import {WaitingApprovalComponent} from './waiting-approval/waiting-approval.component';
+import {Router} from '@angular/router';
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -83,6 +85,9 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   visible = false;
   dataSource: Array<any> = [];
   showRulers = false;
+  receiptNumber: any;
+  modal: any;
+  currentPrintId: any;
   mainControls = [
     {
       icon: 'folder',
@@ -180,7 +185,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   constructor(private resolver: ComponentFactoryResolver,
               private notify: NotifyService,
               private element: ElementService,
-              private baseService: BaseService,
+              private router: Router,
+              public baseService: BaseService,
               private appService: AppService,
               private modalService: NzModalService,
               private formBuilder: FormBuilder,
@@ -192,7 +198,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.getTemp();
-    if (this.baseService.getUserRole() !== 'Administrator') {
+    if (this.baseService.getUserRole() !== 'System Administrator') {
       this.textControls.forEach(u => u.disabled = true);
       this.mainControls.forEach(u => u.disabled = true);
       this.elementsControls.forEach(u => u.disabled = true);
@@ -203,6 +209,9 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    if (this.baseService.getUserRole() === 'Data Clerk') {
+      this.router.navigate(['/dashboard']);
+    }
     this.searchForm = this.formBuilder.group({});
     this.getParams();
     this.toggleKeyMovability();
@@ -255,16 +264,55 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   print(value) {
+    console.log(this.dataSource);
+    console.log(this.searchForm.value);
+    if (!this.receiptNumber) {
+      this.notify.createNotification('info', 'Card Print', 'Enter receipt number to print');
+      return;
+    }
+
+    const data = {
+      receiptNumber: this.receiptNumber,
+      fieldModels: this.dataSource
+    };
     this.loading = true;
-    this.appService.PrintCount().subscribe(
+    this.appService.PrintCount(data).subscribe(
       u => {
         if (u.result === 100) {
           this.loading = false;
           this.printimage = !this.printimage;
           value.click();
           this.selectTemp(this.templatename);
+        } else if (u.result === 300) {
+          this.loading = false;
+          const modal = this.modalService.create({
+            nzTitle: '',
+            nzClosable: false,
+            nzFooter: null,
+            nzMaskClosable: false,
+            nzWrapClassName: 'vertical-center-modal',
+            nzKeyboard: false,
+            nzContent: WaitingApprovalComponent,
+            nzComponentParams: {
+              currentPrintId: u.data
+            }
+          });
+
+          modal.afterClose.subscribe(x => {
+            console.log(x);
+            if (x === true) {
+              this.printimage = !this.printimage;
+              value.click();
+              this.baseService.Approval({hasdata: false});
+              this.selectTemp(this.templatename);
+            } else {
+              this.baseService.Approval({hasdata: false});
+              this.notify.createNotification('info', 'Card print', 'Card Reprint Not Approved');
+            }
+          });
         } else {
           this.loading = false;
+          this.notify.createNotification('info', 'Card print', u.message);
         }
       }
     );
@@ -432,9 +480,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     }
   }
 
-  createImageBox(options?: Fields,
-                 hasPos?: boolean
-  ) {
+  createImageBox(options?: Fields, hasPos?: boolean) {
     const factory = this.resolver.resolveComponentFactory(ImageFieldComponent);
     this.componentRef = this.entry.createComponent(factory);
     this.componentRef.instance.componentRef = this.componentRef;
@@ -703,7 +749,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.appService.get().subscribe(result => {
         if (result.result === 100) {
           this.templates = result.data;
-          console.log(this.templates);
+          // console.log(this.templates);
           this.notify.createMessage('info', result.message);
           this.loading = false;
           this.templatename = this.templates[0].name;
@@ -712,7 +758,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           this.templates[0].data.forEach(u => {
             if (u.type === 'bg') {
               this.bgimage = u.src;
-              console.log(this.bgimage, 'ggh');
+              // console.log(this.bgimage, 'ggh');
             } else if (u.type === 'text') {
               this.createTextField({
                 fontWeight: u.fontWeight,

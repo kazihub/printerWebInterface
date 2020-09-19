@@ -26,6 +26,7 @@
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
     "@fortawesome/fontawesome-free": "^5.5.0",
+    "@microsoft/signalr": "^3.1.8",
     "@types/chartist": "^0.9.43",
     "angular-resizable-element": "^3.3.2",
     "chart.js": "^2.7.3",

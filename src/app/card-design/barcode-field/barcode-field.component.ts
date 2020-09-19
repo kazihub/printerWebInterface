@@ -56,7 +56,7 @@ export class BarcodeFieldComponent implements OnInit, AfterViewInit {
   }
 
   public setPosition(u) {
-    console.log(u);
+    // console.log(u);
     this.posX = u.x;
     this.posY = u.y;
   }

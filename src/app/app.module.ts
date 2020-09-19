@@ -23,6 +23,8 @@ import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpinterceptorService} from './utilities/httpinterceptor.service';
 import {NgxBarcode6Module} from 'ngx-barcode6';
 import { IpAddressComponent } from './ip-address/ip-address.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 registerLocaleData(en);
 
@@ -32,21 +34,24 @@ registerLocaleData(en);
     CommonLayoutComponent,
     FullLayoutComponent,
     IpAddressComponent,
+    ChangePasswordComponent,
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        NzBreadCrumbModule,
-        TemplateModule,
-        SharedModule,
-        NgChartjsModule,
-        ResizableModule,
-        NzNotificationModule,
-        NzMessageModule,
-        NgxBarcode6Module,
-        NgZorroAntdModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    NzBreadCrumbModule,
+    TemplateModule,
+    SharedModule,
+    NgChartjsModule,
+    ResizableModule,
+    NzNotificationModule,
+    NzMessageModule,
+    NgxBarcode6Module,
+    NgZorroAntdModule,
+    ReactiveFormsModule
+  ],
+  entryComponents: [ChangePasswordComponent],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpinterceptorService, multi: true },
     {

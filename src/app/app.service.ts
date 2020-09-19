@@ -17,8 +17,8 @@ export class AppService {
     return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplateData', info);
   }
 
-  PrintCount(): any {
-    return this.httpClient.get(this.baseService.getBaseUrl() + 'App/PrintCount');
+  PrintCount(info): any {
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'App/PrintCount', info);
   }
 
   get(): any {
@@ -41,12 +41,12 @@ export class AppService {
     // return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
     return forkJoin({
       search: this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info),
-      selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'App/getOnlyFields/')
+      selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
     });
   }
 
   getParams(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/getOnlyParams`);
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyParams`);
   }
 
   getTotalPrinted(): any {

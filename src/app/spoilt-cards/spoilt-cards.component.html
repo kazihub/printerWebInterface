@@ -1,0 +1,59 @@
+<div class="page-header">
+  <h1>Spoilt Cards</h1>
+</div>
+<nz-spin [nzSpinning]="loading">
+  <nz-card>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3">
+          <form nz-form [formGroup]="form">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Date</nz-form-label>
+                <nz-date-picker formControlName="date" style="width: 100%"></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Quantity</nz-form-label>
+                <input nz-input formControlName="quantity" placeholder="quantity" type="number">
+              </nz-form-control>
+            </nz-form-item>
+            <div class="m-t-40">
+              <button nz-button [disabled]="form.invalid" (click)="save()" nzType="primary" class="m-r-10">Save</button>
+              <button nz-button [disabled]="form.invalid" (click)="reset()" nzType="primary">Reset</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-9">
+          <div class="d-flex justify-content-between">
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+            </mat-form-field>
+          </div>
+          <table mat-table [dataSource]="dataSource" style="width: 100%" matSort class="bordered">
+            <ng-container matColumnDef="Date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+              <td mat-cell *matCellDef="let elemant">{{elemant.date | amDateFormat: 'LL'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="Count">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Quantity</th>
+              <td mat-cell *matCellDef="let elemant">
+                {{elemant.quantity}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+              <td mat-cell *matCellDef="let elemant">
+                <button nz-button (click)="editItem(elemant)" nzType="primary">edit</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+</nz-spin>

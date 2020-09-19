@@ -24,6 +24,10 @@ export class DbService {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetAllDB`);
   }
 
+  setAsCurrent(id): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/SetDefaultDB/${id}`);
+  }
+
   getOnlyFields(): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
   }

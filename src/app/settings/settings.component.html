@@ -1,0 +1,84 @@
+<div class="page-header">
+  <h1>Configuration Settings</h1>
+</div>
+<nz-spin [nzSpinning]="loading">
+  <nz-card>
+    <form nz-form [formGroup]="form">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <nz-form-item>
+            <nz-form-control>
+              <nz-form-label>Approve Before Reprint</nz-form-label>
+              <label nz-checkbox formControlName="approveBeforeReprint"></label>
+            </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Request Master Password Before Saving In Admin Mode</nz-form-label>
+                <label nz-checkbox formControlName="requestMasterPassBeforeSavingInAdminMode"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Use External Database</nz-form-label>
+                <label nz-checkbox formControlName="useExternalDB"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Allow Editable Fields</nz-form-label>
+                <label nz-checkbox formControlName="allowEditableFields"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Allow Reprint</nz-form-label>
+                <label nz-checkbox formControlName="allowReprint"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Save Print Data</nz-form-label>
+                <label nz-checkbox formControlName="savePrintData"></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col-md-6">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Facility Code</nz-form-label>
+                <input nz-input formControlName="facilityCode" placeholder="Facility Code" type="text">
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Facility Name</nz-form-label>
+                <input nz-input formControlName="facilityName" placeholder="Facility Name" type="text">
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="form.get('requestMasterPassBeforeSavingInAdminMode').value">
+              <nz-form-control>
+                <nz-form-label>Key Code</nz-form-label>
+                <input nz-input formControlName="keyCode" placeholder="Key Code" type="password">
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Administrative Email</nz-form-label>
+                <input nz-input formControlName="administrativeEmail" placeholder="Administrative Email" type="text">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="m-t-40">
+              <button nz-button [disabled]="form.invalid" (click)="add()" nzType="primary" class="m-r-10">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+</nz-spin>

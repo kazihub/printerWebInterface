@@ -1,6 +1,5 @@
 <div class="page-header">
-  <h1>Settings
-  </h1>
+  <h1>DB Settings</h1>
 </div>
 <nz-card>
   <nz-tabset>
@@ -13,7 +12,7 @@
                 <nz-form-item>
                   <nz-form-control>
                     <nz-form-label>Description</nz-form-label>
-                    <input nz-input formControlName="name" placeholder="name" type="text">
+                    <input nz-input formControlName="name" placeholder="Description" type="text">
                   </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
@@ -41,8 +40,8 @@
                   </nz-form-control>
                 </nz-form-item>
                 <div class="m-t-40">
-                  <button nz-button (click)="savedb()" nzType="primary" class="m-r-10">Save & Connect</button>
-                  <button nz-button (click)="form.reset()" nzType="primary">Reset</button>
+                  <button nz-button [disabled]="form.invalid" (click)="savedb()" nzType="primary" class="m-r-10">Save & Connect</button>
+                  <button nz-button [disabled]="form.invalid" (click)="form.reset();id = null" nzType="primary">Reset</button>
                 </div>
               </form>
             </div>
@@ -67,7 +66,9 @@
                 <ng-container matColumnDef="action">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                   <td mat-cell *matCellDef="let elemant">
-
+                    <button nz-button (click)="setAsCurrent(elemant.id)" nzType="primary">set as current</button>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button nz-button (click)="edit(elemant)" nzType="primary">edit</button>
                   </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

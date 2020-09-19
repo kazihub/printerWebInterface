@@ -12,11 +12,19 @@ export class NotifyService {
     private message: NzMessageService
   ) { }
 
-  createNotification(type: string, title: string, message: string): void {
-    this.notification.create(type, title, message);
+  createNotification(type: string, title: string, message: string, duration?): void {
+    if (duration) {
+      this.notification.create(type, title, message, { nzDuration: duration});
+    } else {
+      this.notification.create(type, title, message);
+    }
   }
 
-  createMessage(type: string, message: string): void {
-    this.message.create(type, message);
+  createMessage(type: string, message: string, duration?): void {
+    if (duration) {
+      this.message.create(type, message, { nzDuration: duration});
+    } else {
+      this.message.create(type, message);
+    }
   }
 }

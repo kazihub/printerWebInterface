@@ -43,6 +43,7 @@ export class DbMapperComponent implements OnInit {
     'LEFT JOIN',
     'FULL JOIN'
   ];
+  editState = false;
   displayedColumns: string[] = [
     'Name',
     'Current',
@@ -61,6 +62,7 @@ export class DbMapperComponent implements OnInit {
   DependantsearchField: any;
   generatedQuery = '';
   actionList: Array<Action> = [];
+  id: any;
   @Input() tablename: any;
   @Input() Depentdanttablename: any;
   @Input() selectedFieldnames: any[];
@@ -76,8 +78,8 @@ export class DbMapperComponent implements OnInit {
               private notify: NotifyService) { }
 
   ngOnInit(): void {
-    if (this.baseService.getUserRole() !== 'Administrator') {
-      this.router.navigate(['/card-design']);
+    if (this.baseService.getUserRole() !== 'System Administrator') {
+      this.router.navigate(['/dashboard']);
     }
     this.form = this.fb.group({
       name: [null, Validators.required],
@@ -348,5 +350,30 @@ export class DbMapperComponent implements OnInit {
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  edit(item) {
+    this.form.patchValue({
+      name: item.name,
+      current: item.currentMenu
+    });
+
+    this.id = item.id;
+  }
+
+  setAsCurrent(id) {
+    this.realloading = true;
+    this.dbService.setAsCurrent(id).subscribe(
+      result => {
+        if (result.result === 100) {
+          this.getAll();
+          this.getSavedQuery();
+          this.notify.createMessage('info', result.message);
+        } else {
+          this.notify.createMessage('info', result.message);
+        }
+        this.realloading = false;
+      }
+    );
   }
 }

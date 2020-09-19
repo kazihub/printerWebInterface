@@ -119,6 +119,14 @@
              (nzOnClose)="close()"
              [nzBodyStyle] = "{'background-color': '#bdbdbd' }"
              [nzWidth]="600">
+    <div>
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label>Receipt Number</nz-form-label>
+          <input nz-input [(ngModel)]="receiptNumber" type="text">
+        </nz-form-control>
+      </nz-form-item>
+    </div>
    <form [formGroup]="searchForm">
      <nz-form-item *ngFor="let item of searchParams">
        <nz-form-control>
@@ -128,6 +136,7 @@
      </nz-form-item>
    </form>
     <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+    <nz-divider nzType="horizontal"></nz-divider>
     <div class="container-fluid">
       <div class="row" *ngFor="let item of dataSource">
         <div class="col-8">
@@ -140,7 +149,7 @@
           </nz-form-item>
         </div>
         <div class="col-4">
-          <nz-form-item>
+          <nz-form-item *ngIf="baseService.getPermission().allowEditableFields">
             <nz-form-control>
               <nz-form-label>Allow Edit</nz-form-label>
               <label nz-checkbox [(ngModel)]="item.readOnly"></label>

@@ -49,6 +49,7 @@ export class Login3Component implements OnInit{
         if (result.status === 100) {
           this.notify.createMessage('info', result.message);
           this.setUserData(result.data);
+          this.baseService.ConnectNotification();
           this.loginClick = false;
           if (this.baseService.getUserRole() !== 'Administrator') {
             this.router.navigate(['/card-design']);

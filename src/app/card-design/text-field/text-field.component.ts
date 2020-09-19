@@ -51,13 +51,13 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   }
 
   formateDate() {
-    console.log(this.text.substring(0, 9), 'text check');
+    // console.log(this.text.substring(0, 9), 'text check');
     const date = moment(this.text).format('yyyy-MM-DD');
     if (date) {
-      console.log('true');
+      // console.log('true');
       return moment(this.text).format('yyyy-MM-DD');
     } else {
-      console.log('false');
+      // console.log('false');
       return moment().format('yyyy-MM-DD').toString();
     }
   }
@@ -132,7 +132,7 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   }
 
   dragComplete(event: CdkDragEnd){
-    console.log(this.posX, event.source.getFreeDragPosition(), event.distance);
+    // console.log(this.posX, event.source.getFreeDragPosition(), event.distance);
     this.XYPosition.emit(event.source.getFreeDragPosition());
   }
 
@@ -141,13 +141,13 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
     if (this.hasPos) {
       ele.style.left = `${this.posX}px`;
       ele.style.top = `${this.posY}px`;
-      console.log(this.posX, this.posY);
+      // console.log(this.posX, this.posY);
     }
-    console.log(ele.style.left, ele.style.top, this.hasPos);
+    // console.log(ele.style.left, ele.style.top, this.hasPos);
   }
 
   public setPosition(u) {
-    console.log(u);
+    // console.log(u);
     this.posX = u.x;
     this.posY = u.y;
   }
