@@ -9,18 +9,18 @@ mwlResizable{
   box-sizing: border-box;
 }
 
-.example-box:active {
-  border: dotted #3e3e3e 2px;
-}
+//.example-box:active {
+//  border: dotted #3e3e3e 2px;
+//}
 
 .example-box button{
   display: block;
   position: absolute;
 }
 
-.example-box:hover{
-  border: dotted #3e3e3e 2px;
-}
+//.example-box:hover{
+//  border: dotted #3e3e3e 2px;
+//}
 
 .example-handle {
   position: absolute;

@@ -8,10 +8,16 @@
         <div class="row">
           <div class="col-md-6">
             <nz-form-item>
-            <nz-form-control>
-              <nz-form-label>Approve Before Reprint</nz-form-label>
-              <label nz-checkbox formControlName="approveBeforeReprint"></label>
-            </nz-form-control>
+              <nz-form-control>
+                <nz-form-label>Allow Reprint</nz-form-label>
+                <label nz-checkbox formControlName="allowReprint"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="form.get('allowReprint').value">
+              <nz-form-control>
+                <nz-form-label>Approve Before Reprint</nz-form-label>
+                <label nz-checkbox formControlName="approveBeforeReprint"></label>
+              </nz-form-control>
             </nz-form-item>
             <nz-form-item>
               <nz-form-control>
@@ -31,18 +37,12 @@
                 <label nz-checkbox formControlName="allowEditableFields"></label>
               </nz-form-control>
             </nz-form-item>
-            <nz-form-item>
-              <nz-form-control>
-                <nz-form-label>Allow Reprint</nz-form-label>
-                <label nz-checkbox formControlName="allowReprint"></label>
-              </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-              <nz-form-control>
-                <nz-form-label>Save Print Data</nz-form-label>
-                <label nz-checkbox formControlName="savePrintData"></label>
-              </nz-form-control>
-            </nz-form-item>
+<!--            <nz-form-item>-->
+<!--              <nz-form-control>-->
+<!--                <nz-form-label>Save Print Data</nz-form-label>-->
+<!--                <label nz-checkbox formControlName="savePrintData"></label>-->
+<!--              </nz-form-control>-->
+<!--            </nz-form-item>-->
           </div>
           <div class="col-md-6">
             <nz-form-item>

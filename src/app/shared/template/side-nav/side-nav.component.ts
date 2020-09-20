@@ -181,14 +181,6 @@ export class SideNavComponent implements OnInit{
       icon: 'setting',
       submenu: [
         {
-          path: '/settings',
-          title: 'Configuration Settings',
-          iconType: 'nzIcon',
-          iconTheme: 'outline',
-          icon: 'setting',
-          submenu: []
-        },
-        {
           path: '/users',
           title: 'Users',
           iconType: 'nzIcon',

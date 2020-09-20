@@ -4,6 +4,7 @@ import {SettingsService} from './settings.service';
 import {NotifyService} from '../notify.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {BaseService} from '../utilities/base.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -16,9 +17,13 @@ export class SettingsComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private settingsService: SettingsService,
               private baseService: BaseService,
+              private router: Router,
               private notify: NotifyService) { }
 
   ngOnInit(): void {
+    if (this.baseService.getUserRole() !== 'System Administrator') {
+      this.router.navigate(['/dashboard']);
+    }
     this.form = this.fb.group({
       useExternalDB: [true],
       facilityCode: [null, Validators.required],
@@ -44,6 +49,9 @@ export class SettingsComponent implements OnInit {
 
   public add(): void {
     this.loading = true;
+    if (!this.form.get('allowReprint').value) {
+      this.form.get('approveBeforeReprint').setValue(false);
+    }
     this.settingsService.saveConfig(this.form.value).subscribe(
       u => {
         if (u.result === 100) {

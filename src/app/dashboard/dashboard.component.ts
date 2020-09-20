@@ -16,6 +16,8 @@ export class DashboardComponent implements OnInit {
   today = '0';
   reprintTotal = '0';
   reprintToday = '0';
+  monthlyReprints = '0';
+  monthlyPrints = '0';
   WeekNumber: any;
   date = new Date();
   todayDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
@@ -156,6 +158,8 @@ export class DashboardComponent implements OnInit {
           this.today = u.data.today?.count;
           this.reprintTotal = u.data.reprintsCount.length;
           this.reprintToday = u.data.todayReprints.length;
+          this.monthlyPrints = u.data.monthlyPrints.length;
+          this.monthlyReprints = u.data.monthlyReprints.length;
           this.doughnutChartData.push(parseFloat(this.total));
           this.doughnutChartData.push(parseFloat(this.reprintTotal));
           const AllDates = this.DaysInMonth(new Date().getFullYear(), new Date().getMonth());
