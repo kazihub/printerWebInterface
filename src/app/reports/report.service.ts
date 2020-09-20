@@ -1,9 +1,30 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BaseService } from '../utilities/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
 
-  constructor() { }
+  constructor(
+    private httpClient: HttpClient,
+    private baseService: BaseService,
+  ) { }
+
+  getPrints(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Cards/GetCardPrint`);
+  }
+
+  getPrintsBy(data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/GetCardPrintByDate`, data);
+  }
+
+  getReprintPrints(id): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Cards/GetCardAllRePrint/${id}`);
+  }
+
+  getReprintPrintsByDate(id, data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/GetCardAllRePrint/${id}`, data);
+  }
 }

@@ -1,30 +1,34 @@
-import { ReportService } from './../report.service';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { NotifyService } from 'src/app/notify.service';
 import { BaseService } from 'src/app/utilities/base.service';
-import * as moment from 'moment';
+import { ReportService } from '../report.service';
 import { MatTableDataSource } from '@angular/material/table';
+import * as moment from 'moment';
 
 @Component({
-  selector: 'app-card-report',
-  templateUrl: './card-report.component.html',
-  styleUrls: ['./card-report.component.css']
+  selector: 'app-card-reprint',
+  templateUrl: './card-reprint.component.html',
+  styleUrls: ['./card-reprint.component.css']
 })
-export class CardReportComponent implements OnInit {
+export class CardReprintComponent implements OnInit {
   dataSource: any;
   loading = false;
   exportValue: any;
   dateRange: any;
+  id: any;
   rePrints: Array<any> = [];
   displayedColumns: string[] = [
     'subtable',
-    'ReceiptNumber',
-    'RePrints',
+    'receiptNumber',
     'User',
-    'action'
+    'needApproval',
+    'approver',
+    'Approved',
+    'ApprovedDate'
   ];
 
   mainColumns: string[] = [
@@ -38,10 +42,11 @@ export class CardReportComponent implements OnInit {
     private baseService: BaseService,
     private router: Router,
     private notify: NotifyService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private activatedRoute: ActivatedRoute
   ) { }
-
   ngOnInit(): void {
+    this.id = this.activatedRoute.snapshot.paramMap.get('id');
     if (!this.baseService.getUserRole().includes('Administrator')) {
       this.router.navigate(['/dashboard']);
     }
@@ -76,15 +81,15 @@ export class CardReportComponent implements OnInit {
 
   exportData(exporter, type) {
     if (type === 'Excel') {
-      exporter.exportTable('xlsx', {fileName: 'card print report', sheet: 'card_print', Props: {Author: 'Quixmo'}});
+      exporter.exportTable('xlsx', {fileName: 'card reprint report', sheet: 'card_print', Props: {Author: 'Quixmo'}});
     } else {
-      exporter.exportTable(type, {fileName: 'card print report', Props: {Author: 'Quixmo'}});
+      exporter.exportTable(type, {fileName: 'card reprint report', Props: {Author: 'Quixmo'}});
     }
   }
 
   getReprints() {
     this.loading = true;
-    this.reportService.getPrints().subscribe(
+    this.reportService.getReprintPrints(this.id).subscribe(
       result => {
         if (result.result === 100) {
           this.rePrints = result.data;
@@ -106,7 +111,7 @@ export class CardReportComponent implements OnInit {
       startDate: this.dateRange[0],
       endDate: this.dateRange[1]
     };
-    this.reportService.getPrintsBy(data).subscribe(
+    this.reportService.getReprintPrintsByDate(this.id, data).subscribe(
       result => {
         if (result.result === 100) {
           this.rePrints = result.data;
@@ -119,9 +124,5 @@ export class CardReportComponent implements OnInit {
         this.loading = false;
       }
     );
-  }
-
-  openReport(id) {
-    this.router.navigate(['/reports/card-reprint-reports', id]);
   }
 }

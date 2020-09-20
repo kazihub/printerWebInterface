@@ -56,6 +56,23 @@ export class SideNavComponent implements OnInit{
       submenu: []
     },
     {
+      path: '/reports',
+      title: 'Reports',
+      iconType: 'nzIcon',
+      iconTheme: 'outline',
+      icon: 'idcard',
+      submenu: [
+        {
+          path: '/reports/card-print-reports',
+          title: 'Card Print Reports',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'idcard',
+          submenu: []
+        }
+      ]
+    },
+    {
       path: '',
       title: 'Settings',
       iconType: 'nzIcon',
@@ -138,6 +155,23 @@ export class SideNavComponent implements OnInit{
       iconTheme: 'outline',
       icon: 'idcard',
       submenu: []
+    },
+    {
+      path: '/reports',
+      title: 'Reports',
+      iconType: 'nzIcon',
+      iconTheme: 'outline',
+      icon: 'idcard',
+      submenu: [
+        {
+          path: '/reports/card-print-reports',
+          title: 'Card Print Reports',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'idcard',
+          submenu: []
+        }
+      ]
     },
     {
       path: '',
