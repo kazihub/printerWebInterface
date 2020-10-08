@@ -29,7 +29,7 @@ export class ApprovalListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(private userService: UserAccountService,
               private fb: FormBuilder,
-              private baseService: BaseService,
+              public baseService: BaseService,
               private router: Router,
               private notify: NotifyService) { }
 
@@ -37,8 +37,10 @@ export class ApprovalListComponent implements OnInit {
     if (!this.baseService.getUserRole().includes('Administrator')) {
       this.router.navigate(['/dashboard']);
     }
-    this.getAll();
-    this.getApprovalList();
+    if (this.baseService.getPermission().enableReceiptNumbers) {
+      this.getAll();
+      this.getApprovalList();
+    }
   }
 
   getAll() {

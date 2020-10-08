@@ -1,7 +1,7 @@
 <div class="page-header">
   <h1>Approval List</h1>
 </div>
-<nz-spin [nzSpinning]="loading">
+<nz-spin [nzSpinning]="loading" *ngIf="baseService.getPermission().enableReceiptNumbers">
   <nz-card>
     <div class="container-fluid">
       <div class="row">
@@ -52,3 +52,8 @@
     </div>
   </nz-card>
 </nz-spin>
+<nz-card *ngIf="!baseService.getPermission().enableReceiptNumbers">
+  <h1 class="text-center text-capitalize">
+    Enable Receipt Numbers to allow approvals
+  </h1>
+</nz-card>

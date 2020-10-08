@@ -9,16 +9,24 @@
           <div class="col-md-6">
             <nz-form-item>
               <nz-form-control>
-                <nz-form-label>Allow Reprint</nz-form-label>
-                <label nz-checkbox formControlName="allowReprint"></label>
+                <nz-form-label>Enable Receipt Numbers</nz-form-label>
+                <label nz-checkbox formControlName="enableReceiptNumbers"></label>
               </nz-form-control>
             </nz-form-item>
-            <nz-form-item *ngIf="form.get('allowReprint').value">
-              <nz-form-control>
-                <nz-form-label>Approve Before Reprint</nz-form-label>
-                <label nz-checkbox formControlName="approveBeforeReprint"></label>
-              </nz-form-control>
-            </nz-form-item>
+            <ng-container *ngIf="form.get('enableReceiptNumbers').value">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>Allow Reprint</nz-form-label>
+                  <label nz-checkbox formControlName="allowReprint"></label>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item *ngIf="form.get('allowReprint').value">
+                <nz-form-control>
+                  <nz-form-label>Approve Before Reprint</nz-form-label>
+                  <label nz-checkbox formControlName="approveBeforeReprint"></label>
+                </nz-form-control>
+              </nz-form-item>
+            </ng-container>
             <nz-form-item>
               <nz-form-control>
                 <nz-form-label>Request Master Password Before Saving In Admin Mode</nz-form-label>
@@ -37,12 +45,6 @@
                 <label nz-checkbox formControlName="allowEditableFields"></label>
               </nz-form-control>
             </nz-form-item>
-<!--            <nz-form-item>-->
-<!--              <nz-form-control>-->
-<!--                <nz-form-label>Save Print Data</nz-form-label>-->
-<!--                <label nz-checkbox formControlName="savePrintData"></label>-->
-<!--              </nz-form-control>-->
-<!--            </nz-form-item>-->
           </div>
           <div class="col-md-6">
             <nz-form-item>
@@ -67,6 +69,12 @@
               <nz-form-control>
                 <nz-form-label>Administrative Email</nz-form-label>
                 <input nz-input formControlName="administrativeEmail" placeholder="Administrative Email" type="text">
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label>Card Date Format</nz-form-label>
+                <input nz-input formControlName="dateFormat" placeholder="Card Date Format" type="text">
               </nz-form-control>
             </nz-form-item>
           </div>

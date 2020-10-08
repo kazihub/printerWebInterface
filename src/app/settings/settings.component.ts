@@ -34,7 +34,9 @@ export class SettingsComponent implements OnInit {
       requestMasterPassBeforeSavingInAdminMode: [false],
       savePrintData: [false],
       administrativeEmail: [null, Validators.required],
-      keyCode: [null]
+      keyCode: [null],
+      enableReceiptNumbers: [false],
+      dateFormat: [null, Validators.required]
     });
 
     if (this.form.get('requestMasterPassBeforeSavingInAdminMode').value) {
@@ -86,7 +88,9 @@ export class SettingsComponent implements OnInit {
             requestMasterPassBeforeSavingInAdminMode: data.requestMasterPassBeforeSavingInAdminMode,
             savePrintData: data.savePrintData,
             administrativeEmail: data.administrativeEmail,
-            keyCode: data.keyCode
+            keyCode: data.keyCode,
+            enableReceiptNumbers: data.enableReceiptNumbers,
+            dateFormat: data.dateFormat
           });
         }
         this.loading = false;

@@ -36,7 +36,7 @@ export class ReprintRequestComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(private userService: UserAccountService,
               private fb: FormBuilder,
-              private baseService: BaseService,
+              public baseService: BaseService,
               private router: Router,
               private notify: NotifyService) {
     baseService.currentApproval.subscribe(u => {

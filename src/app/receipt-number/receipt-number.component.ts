@@ -37,7 +37,7 @@ export class ReceiptNumberComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   constructor(private receiptService: ReceiptService,
               private fb: FormBuilder,
-              private baseService: BaseService,
+              public baseService: BaseService,
               private router: Router,
               private notify: NotifyService) { }
 

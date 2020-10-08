@@ -4,6 +4,7 @@ import {AppService} from '../../app.service';
 import {CdkDragEnd} from '@angular/cdk/drag-drop';
 declare var $: any;
 import * as moment from 'moment';
+import {BaseService} from '../../utilities/base.service';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Output() XYPosition = new EventEmitter<any>();
   offset = { x: 0, y: 0 };
 
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService,
+              private baseService: BaseService) { }
 
   ngOnInit(): void {
   }
@@ -52,13 +54,13 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
 
   formateDate() {
     // console.log(this.text.substring(0, 9), 'text check');
-    const date = moment(this.text).format('yyyy-MM-DD');
+    const date = moment(this.text).format(this.baseService.getPermission().dateFormat);
     if (date) {
       // console.log('true');
-      return moment(this.text).format('yyyy-MM-DD');
+      return moment(this.text).format(this.baseService.getPermission().dateFormat);
     } else {
       // console.log('false');
-      return moment().format('yyyy-MM-DD').toString();
+      return moment().format(this.baseService.getPermission().dateFormat).toString();
     }
   }
 

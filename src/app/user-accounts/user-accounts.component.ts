@@ -147,4 +147,23 @@ export class UserAccountsComponent implements OnInit {
     this.editState = false;
     this.id = null;
   }
+
+  public resetPassword(email): void {
+    this.loading = true;
+    this.userService.resetPassword(email).subscribe(
+      u => {
+        if (u.result === 100) {
+          this.loading = false;
+          this.getAll();
+          this.notify.createNotification('info', 'Success Message', u.message);
+        } else {
+          this.loading = false;
+          this.notify.createNotification('danger', 'Failure Message', u.message);
+        }
+      },
+      err => {
+        this.loading = false;
+        this.notify.createNotification('danger', 'Failure Message', `something went wrong, ${err.statuscode}`);
+      });
+  }
 }

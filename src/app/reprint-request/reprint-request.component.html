@@ -1,7 +1,7 @@
 <div class="page-header">
   <h1>Reprint Requests</h1>
 </div>
-<nz-card>
+<nz-card *ngIf="baseService.getPermission().enableReceiptNumbers">
   <div class="d-flex justify-content-between">
     <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
     <mat-form-field>
@@ -61,4 +61,9 @@
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" style="overflow: hidden"
         align="center" [hidden]="!row.show"></tr>
   </table>
+</nz-card>
+<nz-card *ngIf="!baseService.getPermission().enableReceiptNumbers">
+  <h1 class="text-center text-capitalize">
+    Enable Receipt Numbers to allow receive reprint requests
+  </h1>
 </nz-card>

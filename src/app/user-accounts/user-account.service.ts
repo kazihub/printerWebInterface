@@ -20,6 +20,10 @@ export class UserAccountService {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/GetAllUsers`);
   }
 
+  resetPassword(email): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/ResetPassword/${email}`);
+  }
+
   editUser(info): any {
     return this.httpClient.put(`${this.baseService.getBaseUrl()}Account/EditUser`, info);
   }

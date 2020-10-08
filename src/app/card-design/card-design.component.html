@@ -119,7 +119,7 @@
              (nzOnClose)="close()"
              [nzBodyStyle] = "{'background-color': '#bdbdbd' }"
              [nzWidth]="600">
-    <div>
+    <div *ngIf="baseService.getPermission().enableReceiptNumbers">
       <nz-form-item>
         <nz-form-control>
           <nz-form-label>Receipt Number</nz-form-label>

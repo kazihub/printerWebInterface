@@ -266,9 +266,11 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   print(value) {
     console.log(this.dataSource);
     console.log(this.searchForm.value);
-    if (!this.receiptNumber) {
-      this.notify.createNotification('info', 'Card Print', 'Enter receipt number to print');
-      return;
+    if (this.baseService.getPermission().enableReceiptNumbers) {
+      if (!this.receiptNumber) {
+        this.notify.createNotification('info', 'Card Print', 'Enter receipt number to print');
+        return;
+      }
     }
 
     const data = {
@@ -896,15 +898,19 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   Apply() {
+    console.log('all list', this.list);
     let item = '';
     this.list.forEach(u => {
       if (u.meta.mappedColumnName) {
         if (u.meta.type === 'text') {
           const data = JSON.parse(u.meta.mappedColumnName);
           data.forEach(x => {
-            item = `${item} ${this.dataSource.find(z => z.field === x.toUpperCase())?.value}`;
+            const val = this.dataSource.find(z => z.field === x.toUpperCase())?.value;
+            if (val) {
+              item = `${item} ${val}`;
+            }
           });
-          console.log(item, 'item');
+          console.log('item', item);
           u.ref.instance.text =  item;
           item = '';
         } else if (u.meta.type === 'image') {
