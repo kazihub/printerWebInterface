@@ -3,7 +3,6 @@ import {HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse} from
 import { Observable } from 'rxjs';
 import { BaseService } from './base.service';
 import {map} from 'rxjs/operators';
-import {NewTemplateComponent} from '../card-design/new-template/new-template.component';
 import {NzModalService} from 'ng-zorro-antd';
 import {ChangePasswordComponent} from '../change-password/change-password.component';
 

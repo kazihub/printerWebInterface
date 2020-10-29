@@ -82,6 +82,7 @@ export class DbMapperComponent implements OnInit {
       this.router.navigate(['/dashboard']);
     }
     this.form = this.fb.group({
+      id: [null],
       name: [null, Validators.required],
       server: [null, Validators.required],
       catalog: [null, Validators.required],
@@ -355,10 +356,9 @@ export class DbMapperComponent implements OnInit {
   edit(item) {
     this.form.patchValue({
       name: item.name,
-      current: item.currentMenu
+      current: item.currentMenu,
+      id: item.id
     });
-
-    this.id = item.id;
   }
 
   setAsCurrent(id) {
