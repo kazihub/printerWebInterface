@@ -25,6 +25,12 @@ import {NgxBarcode6Module} from 'ngx-barcode6';
 import { IpAddressComponent } from './ip-address/ip-address.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import { TaxComponent } from './tax/tax.component';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatTableModule} from '@angular/material/table';
+import {MatInputModule} from '@angular/material/input';
+import {MatSortModule} from '@angular/material/sort';
 
 registerLocaleData(en);
 
@@ -35,6 +41,7 @@ registerLocaleData(en);
     FullLayoutComponent,
     IpAddressComponent,
     ChangePasswordComponent,
+    TaxComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +56,12 @@ registerLocaleData(en);
     NzMessageModule,
     NgxBarcode6Module,
     NgZorroAntdModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatTableModule,
+    MatInputModule,
+    MatSortModule
   ],
   entryComponents: [ChangePasswordComponent],
   providers: [

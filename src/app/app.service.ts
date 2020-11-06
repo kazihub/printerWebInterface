@@ -53,6 +53,30 @@ export class AppService {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/TotalPrinted`);
   }
 
+  getActiveTaxes(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/GetActiveTax`);
+  }
+
+  getTaxes(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/GetAllTax`);
+  }
+
+  getInvoice(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/GetInvoice`, info);
+  }
+
+  sendInvoice(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/SendInvoice`, info);
+  }
+
+  addTax(info): any {
+    return this.httpClient.post(this.baseService.getBaseUrl() + 'Account/AddTax', info);
+  }
+
+  editTax(info): any {
+    return this.httpClient.put(this.baseService.getBaseUrl() + 'Account/EditTax', info);
+  }
+
   public uuidv4() {
     return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       // tslint:disable-next-line:no-bitwise one-variable-per-declaration

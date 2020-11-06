@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import {TaxComponent} from '../../tax/tax.component';
+import {RouteGuard} from '../../utilities/route-guard.service';
 
 export const CommonLayout_ROUTES: Routes = [
   {
@@ -40,5 +42,18 @@ export const CommonLayout_ROUTES: Routes = [
   {
     path: 'reports',
     loadChildren: () => import('../../reports/reports.module').then(m => m.ReportsModule)
+  },
+  {
+    path: 'tax',
+    canActivate: [RouteGuard],
+    component: TaxComponent,
+    data: {
+      title: 'db design ',
+      headerDisplay: 'none'
+    }
+  },
+  {
+    path: 'invoice',
+    loadChildren: () => import('../../invoice/invoice.module').then(m => m.InvoiceModule)
   }
 ];

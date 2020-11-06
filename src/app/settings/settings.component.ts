@@ -36,7 +36,8 @@ export class SettingsComponent implements OnInit {
       administrativeEmail: [null, Validators.required],
       keyCode: [null],
       enableReceiptNumbers: [false],
-      dateFormat: [null, Validators.required]
+      dateFormat: [null, Validators.required],
+      unitCost: [null, Validators.required]
     });
 
     if (this.form.get('requestMasterPassBeforeSavingInAdminMode').value) {
@@ -90,7 +91,8 @@ export class SettingsComponent implements OnInit {
             administrativeEmail: data.administrativeEmail,
             keyCode: data.keyCode,
             enableReceiptNumbers: data.enableReceiptNumbers,
-            dateFormat: data.dateFormat
+            dateFormat: data.dateFormat,
+            unitCost: data.unitCost
           });
         }
         this.loading = false;

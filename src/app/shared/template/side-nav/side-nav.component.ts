@@ -56,6 +56,14 @@ export class SideNavComponent implements OnInit{
       submenu: []
     },
     {
+      path: '/invoice',
+      title: 'Invoices',
+      iconType: 'nzIcon',
+      iconTheme: 'outline',
+      icon: 'idcard',
+      submenu: []
+    },
+    {
       path: '/reports',
       title: 'Reports',
       iconType: 'nzIcon',
@@ -109,6 +117,14 @@ export class SideNavComponent implements OnInit{
           iconType: 'nzIcon',
           iconTheme: 'outline',
           icon: 'user',
+          submenu: []
+        },
+        {
+          path: '/tax',
+          title: 'Tax',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'setting',
           submenu: []
         }
       ]
