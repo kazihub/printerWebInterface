@@ -46,6 +46,7 @@ export class DbMapperComponent implements OnInit {
   editState = false;
   displayedColumns: string[] = [
     'Name',
+    'databaseType',
     'Current',
     'action'
   ];
@@ -55,6 +56,8 @@ export class DbMapperComponent implements OnInit {
   fieldAlias: any;
   FieldList: any[];
   FieldList2: any[];
+  TablePrefix = 'public';
+  useTablePrefix = false;
   AliasList: Array<any> = [];
   searchField: any;
   searchFieldList: Array<any> = [];
@@ -63,6 +66,16 @@ export class DbMapperComponent implements OnInit {
   generatedQuery = '';
   actionList: Array<Action> = [];
   id: any;
+  dbTypes = [
+    {
+      id: 0,
+      name: 'MSSQL'
+    },
+    {
+      id: 1,
+      name: 'POSTGRES SQL'
+    }
+  ];
   @Input() tablename: any;
   @Input() Depentdanttablename: any;
   @Input() selectedFieldnames: any[];
@@ -87,7 +100,8 @@ export class DbMapperComponent implements OnInit {
       server: [null, Validators.required],
       catalog: [null, Validators.required],
       user: [null, Validators.required],
-      pass: [null, Validators.required]
+      pass: [null, Validators.required],
+      databaseType: [null, Validators.required]
     });
     this.getSavedQuery();
     this.getAll();
@@ -110,6 +124,10 @@ export class DbMapperComponent implements OnInit {
     );
   }
 
+  getDB(id): any {
+    return this.dbTypes.find(u => u.id === id)?.name;
+  }
+
   addConstToQuery() {
     if (this.actionList.length === 0) {
       this.generatedQuery = `${this.constant} `;
@@ -128,9 +146,25 @@ export class DbMapperComponent implements OnInit {
         table: this.tablename,
         alias: this.tableAlias
       });
-      this.generatedQuery = `${this.generatedQuery} ${this.tablename} AS ${this.tableAlias}`;
+      if (this.useTablePrefix) {
+        if (!this.TablePrefix) {
+          this.notify.createMessage('info', 'please provide a table prefix,');
+          return;
+        }
+        this.generatedQuery = `${this.generatedQuery} ${this.TablePrefix}."${this.tablename}" AS ${this.tableAlias}`;
+      } else {
+        this.generatedQuery = `${this.generatedQuery} ${this.tablename} AS ${this.tableAlias}`;
+      }
     } else {
-      this.generatedQuery = `${this.generatedQuery} ${this.tablename}`;
+      if (this.useTablePrefix) {
+        if (!this.TablePrefix) {
+          this.notify.createMessage('info', 'please provide a table prefix,');
+          return;
+        }
+        this.generatedQuery = `${this.generatedQuery} ${this.TablePrefix}."${this.tablename}"`;
+      } else {
+        this.generatedQuery = `${this.generatedQuery} ${this.tablename}`;
+      }
     }
     this.actionList.push({
       value: this.generatedQuery,
@@ -186,9 +220,17 @@ export class DbMapperComponent implements OnInit {
     if (this.useTableAlias) {
       this.selectedFieldnames.forEach((u, index) => {
         if (index === this.selectedFieldnames.length - 1) {
-          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u}`;
+          if (this.useTablePrefix) {
+            this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}."${u}"`;
+          } else {
+            this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u}`;
+          }
         } else {
-          this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u},`;
+          if (this.useTablePrefix) {
+            this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}."${u}",`;
+          } else {
+            this.generatedQuery = `${this.generatedQuery} ${this.tableAlias}.${u},`;
+          }
         }
         if (!this.finalSearchFieldList.find(x => x.columnName === u)) {
           this.finalSearchFieldList.push({
@@ -200,9 +242,17 @@ export class DbMapperComponent implements OnInit {
     } else {
       this.selectedFieldnames.forEach((u, index) => {
         if (index === this.selectedFieldnames.length - 1) {
-          this.generatedQuery = `${this.generatedQuery} ${u}`;
+          if (this.useTablePrefix) {
+            this.generatedQuery = `${this.generatedQuery} "${u}"`;
+          } else {
+            this.generatedQuery = `${this.generatedQuery} ${u}`;
+          }
         } else {
-          this.generatedQuery = `${this.generatedQuery} ${u},`;
+          if (this.useTablePrefix) {
+            this.generatedQuery = `${this.generatedQuery} "${u}",`;
+          } else {
+            this.generatedQuery = `${this.generatedQuery} ${u},`;
+          }
         }
         if (!this.finalSearchFieldList.find(x => x.columnName === u)) {
           this.finalSearchFieldList.push({
