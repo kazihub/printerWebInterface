@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {SettingsService} from './settings.service';
 import {NotifyService} from '../notify.service';
-import {MatTableDataSource} from '@angular/material/table';
 import {BaseService} from '../utilities/base.service';
 import {Router} from '@angular/router';
 
@@ -37,7 +36,8 @@ export class SettingsComponent implements OnInit {
       keyCode: [null],
       enableReceiptNumbers: [false],
       dateFormat: [null, Validators.required],
-      unitCost: [null, Validators.required]
+      unitCost: [null, Validators.required],
+      pgPort: [null]
     });
 
     if (this.form.get('requestMasterPassBeforeSavingInAdminMode').value) {
@@ -92,7 +92,8 @@ export class SettingsComponent implements OnInit {
             keyCode: data.keyCode,
             enableReceiptNumbers: data.enableReceiptNumbers,
             dateFormat: data.dateFormat,
-            unitCost: data.unitCost
+            unitCost: data.unitCost,
+            pgPort: data.pgPort
           });
         }
         this.loading = false;
