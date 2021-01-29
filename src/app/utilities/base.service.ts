@@ -8,9 +8,9 @@ import * as signalR from '@microsoft/signalr';
 import {NotifyService} from '../notify.service';
 
 
-const baseUrL = 'https://localhost:44367/api/';
-
-// const baseUrL = 'http://192.168.0.244:2029/api/';
+// const baseUrL = 'https://localhost:44367/api/';
+//
+const baseUrL = 'http://10.10.0.3:2029/api/';
 
 
 @Injectable({
