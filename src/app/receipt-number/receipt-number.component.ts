@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
-import {SpoiltService} from '../spoilt-cards/spoilt.service';
 import {BaseService} from '../utilities/base.service';
 import {Router} from '@angular/router';
 import {NotifyService} from '../notify.service';
@@ -18,12 +17,18 @@ export class ReceiptNumberComponent implements OnInit {
   form: FormGroup;
   dataSource: any;
   loading = false;
+  print = false;
+  receipt: any;
+  today = new Date();
   allUsers: Array<any> = [];
   id: any;
+  visible = false;
+  idTypes: Array<any> = [];
   editState = false;
   roles: Array<any> = [];
   displayedColumns: string[] = [
     'Receipt Number',
+    'ID Type',
     'Date'
   ];
 
@@ -42,12 +47,17 @@ export class ReceiptNumberComponent implements OnInit {
               private notify: NotifyService) { }
 
   ngOnInit(): void {
+    setInterval(() => {
+      this.today = new Date();
+    }, 1000);
     if (this.baseService.getUserRole() === 'User') {
       this.router.navigate(['/card-design']);
     }
     this.form = this.fb.group({
-      receiptNumber: [null, Validators.required]
+      receiptNumber: [null, Validators.required],
+      idTypeId: [null, Validators.required]
     });
+    this.getIDTypes();
     this.getAll();
   }
 
@@ -66,6 +76,14 @@ export class ReceiptNumberComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  open() {
+    this.visible = true;
+  }
+
+  close() {
+    this.visible = false;
   }
 
   public add(): void {
@@ -88,8 +106,38 @@ export class ReceiptNumberComponent implements OnInit {
       });
   }
 
+  public generate(): void {
+    this.loading = true;
+    this.receiptService.generateReceipt().subscribe(
+      u => {
+        if (u.result === 100) {
+          this.loading = false;
+          this.getAll();
+          this.print = true;
+          this.receipt = u.data;
+          this.notify.createNotification('info', 'Success Message', u.message);
+        } else {
+          this.loading = false;
+          this.notify.createNotification('danger', 'Failure Message', u.message);
+        }
+      },
+      err => {
+        this.loading = false;
+        this.notify.createNotification('danger', 'Failure Message', `something went wrong, ${err.statuscode}`);
+      });
+  }
+
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  getIDTypes() {
+    this.loading = true;
+    this.receiptService.getIDType().subscribe(
+      result => {
+        this.idTypes =  result.data;
+      }
+    );
   }
 
   reset() {

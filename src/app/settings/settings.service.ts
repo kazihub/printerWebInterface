@@ -20,4 +20,11 @@ export class SettingsService {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/GetConfig`);
   }
 
+  saveIDtype(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/IDType`, info);
+  }
+
+  getIDType(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetIDType`);
+  }
 }

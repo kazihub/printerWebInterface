@@ -25,6 +25,10 @@ export class AppService {
     return this.httpClient.get(this.baseService.getBaseUrl() + 'App/GetTemplateData');
   }
 
+  getInput(): any {
+    return this.httpClient.get(this.baseService.getBaseUrl() + 'App/GetInputFields');
+  }
+
   saveTemplate(info): any {
     return this.httpClient.post(this.baseService.getBaseUrl() + 'App/SaveTemplate', info);
   }
@@ -83,5 +87,9 @@ export class AppService {
       const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
+  }
+
+  getReceipt(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Cards/GetReceiptNumbers`);
   }
 }

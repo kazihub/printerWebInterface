@@ -41,6 +41,7 @@
     "moment": "^2.27.0",
     "ng-chartjs": "0.0.7",
     "ng-zorro-antd": "^9.0.2",
+    "ngx-barcode": "^0.3.0",
     "ngx-barcode6": "^1.0.10",
     "ngx-highlightjs": "^2.1.1",
     "ngx-infinite-scroll": "^6.0.1",

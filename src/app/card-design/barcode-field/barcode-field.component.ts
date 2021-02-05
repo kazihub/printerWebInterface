@@ -20,6 +20,8 @@ export class BarcodeFieldComponent implements OnInit, AfterViewInit {
   @Output() elementSelected = new EventEmitter<any>();
   @Output() Destroy = new EventEmitter<any>();
   @Output() XYPosition = new EventEmitter<any>();
+  @Input() useAsInput = false;
+  @Input() inputName: any;
   offset = { x: 0, y: 0 };
 
   constructor(private appService: AppService) { }

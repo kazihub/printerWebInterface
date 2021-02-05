@@ -1,0 +1,7 @@
+.receipt {
+  width: 100%;
+  border-collapse: collapse;
+}
+.receipt, th, td {
+  border: 1px solid black;
+}

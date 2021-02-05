@@ -5,21 +5,84 @@
   <nz-card>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3">
-          <form nz-form [formGroup]="form">
-            <nz-form-item>
-              <nz-form-control>
-                <nz-form-label>Receipt Number</nz-form-label>
-                <input nz-input formControlName="receiptNumber" placeholder="Receipt Number" type="text">
-              </nz-form-control>
-            </nz-form-item>
-            <div class="m-t-40">
-              <button nz-button [disabled]="form.invalid" nz-popconfirm nzPopconfirmTitle="Please make sure the receipt number is correct before saving, once saved you cannot edit it." nzOkText="ok" nzCancelText="cancel" (nzOnConfirm)="add()" nzType="primary" class="m-r-10">Save</button>
-              <button nz-button [disabled]="form.invalid" (click)="reset()" nzType="primary">Reset</button>
+        <div class="col-md-4">
+          <ng-container *ngIf="baseService.getPermission().generateAndPrintReceipt">
+            <div class="m-b-20">
+              <button nz-button nzType="primary" (click)="generate()" class="m-r-10">GENERATE RECEIPT</button>
+              <button nz-button [disabled]="!print" [useExistingCss]="true" printSectionId="print-section" ngxPrint nzType="primary">PRINT</button>
             </div>
-          </form>
+            <div id="print-section">
+              <div class="d-flex justify-content-start">
+                <h1> {{baseService.getPermission().facilityName}}</h1>
+              </div>
+              <div class="d-flex justify-content-start">
+                <h1> {{today | amDateFormat : 'LL hh:mm A'}}</h1>
+              </div>
+              <div class="d-flex justify-content-start">
+                <h1 class="font-bold">No. {{receipt?.receiptNumber}}</h1>
+              </div>
+              <table class="receipt">
+                <thead>
+                <tr>
+                  <th><h1>Item</h1></th>
+                  <th><h1>Quantity</h1></th>
+                  <th><h1>Unit Cost</h1></th>
+                  <th><h1>Total</h1></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td><h1>Hospital ID Card</h1></td>
+                  <td>
+                    <h1>1</h1>
+                  </td>
+                  <td><h1>GHC {{baseService.getPermission()?.unitCost}}</h1></td>
+                  <td><h1>GHC {{baseService.getPermission()?.unitCost}}</h1></td>
+                </tr>
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-between">
+                <div class="flex">
+                  <h1 class=" font-bold">Total</h1>
+                </div>
+                <h1>GHC {{baseService.getPermission()?.unitCost}}</h1>
+              </div>
+              <div class="d-flex justify-content-start">
+                <h1>Served by : {{baseService.getUserData()?.fullName}}</h1>
+              </div>
+              <div class="d-flex justify-content-start">
+                <h1>Website : https://quixmocards.com/</h1>
+              </div>
+              <ngx-barcode bc-element-type="img" [bc-value]="receipt?.receiptNumber" [bc-display-value]="true"></ngx-barcode>
+              <div class="d-flex justify-content-start">
+                <h1>THANK YOU</h1>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!baseService.getPermission().generateAndPrintReceipt">
+            <form nz-form [formGroup]="form">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>Number Type</nz-form-label>
+                  <nz-select nzShowSearch nzAllowClear style="width: 100%" formControlName="idTypeId">
+                    <nz-option *ngFor="let item of idTypes" [nzValue]="item.id" [nzLabel]="item.name"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>Receipt Number</nz-form-label>
+                  <input nz-input formControlName="receiptNumber" placeholder="Receipt Number" type="text">
+                </nz-form-control>
+              </nz-form-item>
+              <div class="m-t-40">
+                <button nz-button [disabled]="form.invalid" nz-popconfirm nzPopconfirmTitle="Please make sure the receipt number is correct before saving, once saved you cannot edit it." nzOkText="ok" nzCancelText="cancel" (nzOnConfirm)="add()" nzType="primary" class="m-r-10">Save</button>
+                <button nz-button [disabled]="form.invalid" (click)="reset()" nzType="primary">Reset</button>
+              </div>
+            </form>
+          </ng-container>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
           <div class="d-flex justify-content-between">
             <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
             <mat-form-field>
@@ -30,6 +93,12 @@
             <ng-container matColumnDef="Date">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
               <td mat-cell *matCellDef="let elemant">{{elemant.date | amDateFormat: 'LL'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="ID Type">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Type</th>
+              <td mat-cell *matCellDef="let elemant">
+                {{elemant.idType?.name}}
+              </td>
             </ng-container>
             <ng-container matColumnDef="Receipt Number">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Receipt Number</th>
@@ -44,6 +113,7 @@
       </div>
     </div>
   </nz-card>
+
 </nz-spin>
 <nz-card *ngIf="!baseService.getPermission().enableReceiptNumbers">
   <h1 class="text-center text-capitalize">

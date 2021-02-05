@@ -19,4 +19,16 @@ export class ReceiptService {
   getReceipt(): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Cards/GetReceiptNumbers`);
   }
+
+  generateReceipt(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}Cards/GenerateReceipt`);
+  }
+
+  saveIDtype(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}App/IDType`, info);
+  }
+
+  getIDType(): any {
+    return this.httpClient.get(`${this.baseService.getBaseUrl()}App/GetIDType`);
+  }
 }

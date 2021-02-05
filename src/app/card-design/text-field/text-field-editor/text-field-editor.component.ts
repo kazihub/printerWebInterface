@@ -22,6 +22,8 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedFieldnames: any[];
   @Input() mappedColumnName: any[];
   @Input() hasmapping = false;
+  @Input() useAsInput = false;
+  @Input() inputName: any;
   options = [
     'DATE',
     'TEXT'
@@ -58,7 +60,9 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
       positionY: this.positionY,
       mappinType: this.mappinType,
       mappedColumnName: JSON.stringify(this.mappedColumnName),
-      hasmapping: this.hasmapping
+      hasmapping: this.hasmapping,
+      useAsInput: this.useAsInput,
+      inputName: this.inputName
     });
   }
 
@@ -100,7 +104,9 @@ export class TextFieldEditorComponent implements OnInit, OnDestroy, OnChanges {
       positionY: this.positionY,
       mappinType: this.mappinType,
       mappedColumnName: JSON.stringify(this.mappedColumnName),
-      hasmapping: this.hasmapping
+      hasmapping: this.hasmapping,
+      useAsInput: this.useAsInput,
+      inputName: this.inputName
     });
   }
 }

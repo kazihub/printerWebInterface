@@ -5,6 +5,8 @@ import { SettingsRoutingModule } from './settings-routing.module';
 import { SettingsComponent } from './settings.component';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatTableModule} from "@angular/material/table";
+import {MatSortModule} from "@angular/material/sort";
 
 
 @NgModule({
@@ -14,7 +16,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     SettingsRoutingModule,
     NgZorroAntdModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    MatTableModule,
+    MatSortModule
   ]
 })
 export class SettingsModule { }

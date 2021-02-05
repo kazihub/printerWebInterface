@@ -9,11 +9,23 @@
           <div class="col-md-6">
             <nz-form-item>
               <nz-form-control>
+                <nz-form-label>Use Manual Entries ?</nz-form-label>
+                <label nz-checkbox formControlName="useExternalDB"></label>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control>
                 <nz-form-label>Enable Receipt Numbers</nz-form-label>
                 <label nz-checkbox formControlName="enableReceiptNumbers"></label>
               </nz-form-control>
             </nz-form-item>
             <ng-container *ngIf="form.get('enableReceiptNumbers').value">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>Generate And Print Receipt</nz-form-label>
+                  <label nz-checkbox formControlName="generateAndPrintReceipt"></label>
+                </nz-form-control>
+              </nz-form-item>
               <nz-form-item>
                 <nz-form-control>
                   <nz-form-label>Allow Reprint</nz-form-label>
@@ -31,12 +43,6 @@
               <nz-form-control>
                 <nz-form-label>Request Master Password Before Saving In Admin Mode</nz-form-label>
                 <label nz-checkbox formControlName="requestMasterPassBeforeSavingInAdminMode"></label>
-              </nz-form-control>
-            </nz-form-item>
-            <nz-form-item>
-              <nz-form-control>
-                <nz-form-label>Use External Database</nz-form-label>
-                <label nz-checkbox formControlName="useExternalDB"></label>
               </nz-form-control>
             </nz-form-item>
             <nz-form-item>
@@ -100,5 +106,45 @@
         </div>
       </div>
     </form>
+  </nz-card>
+  <nz-card>
+    <nz-divider nzText="Number Types" nzOrientation="left" nzType="horizontal"></nz-divider>
+   <div class="container-fluid">
+     <div class="row">
+       <div class="col-md-4">
+         <form nz-form [formGroup]="idType">
+           <nz-form-item>
+             <nz-form-control>
+               <nz-form-label>Name</nz-form-label>
+               <input nz-input formControlName="name" placeholder="Name" type="text">
+             </nz-form-control>
+           </nz-form-item>
+           <nz-form-item>
+             <nz-form-control>
+               <button nz-button [disabled]="idType.invalid" (click)="saveIDTypes()" nzType="primary" class="m-r-10">Save</button>
+             </nz-form-control>
+           </nz-form-item>
+         </form>
+       </div>
+       <div class="col-md-8">
+         <table mat-table [dataSource]="dataSource" style="width: 100%" matSort class="bordered">
+           <ng-container matColumnDef="ID Type">
+             <th mat-header-cell *matHeaderCellDef mat-sort-header>Number Type</th>
+             <td mat-cell *matCellDef="let elemant">
+               {{elemant.name}}
+             </td>
+           </ng-container>
+           <ng-container matColumnDef="action">
+             <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+             <td mat-cell *matCellDef="let elemant">
+               <button nz-button nzSize="small" (click)="editForm(elemant)" nzType="primary" class="m-r-10">Edit</button>
+             </td>
+           </ng-container>
+           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+         </table>
+       </div>
+     </div>
+   </div>
   </nz-card>
 </nz-spin>

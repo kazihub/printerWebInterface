@@ -4,6 +4,7 @@ import {SettingsService} from './settings.service';
 import {NotifyService} from '../notify.service';
 import {BaseService} from '../utilities/base.service';
 import {Router} from '@angular/router';
+import {MatTableDataSource} from '@angular/material/table';
 
 @Component({
   selector: 'app-settings',
@@ -13,6 +14,13 @@ import {Router} from '@angular/router';
 export class SettingsComponent implements OnInit {
   form: FormGroup;
   loading = false;
+  idTypes: Array<any> = [];
+  idType: FormGroup;
+  dataSource: any;
+  displayedColumns: string[] = [
+    'ID Type',
+    'action'
+  ];
   constructor(private fb: FormBuilder,
               private settingsService: SettingsService,
               private baseService: BaseService,
@@ -23,6 +31,11 @@ export class SettingsComponent implements OnInit {
     if (this.baseService.getUserRole() !== 'System Administrator') {
       this.router.navigate(['/dashboard']);
     }
+    this.getIDTypes();
+    this.idType = this.fb.group({
+      id: [null],
+      name: [null, Validators.required]
+    });
     this.form = this.fb.group({
       useExternalDB: [true],
       facilityCode: [null, Validators.required],
@@ -37,7 +50,14 @@ export class SettingsComponent implements OnInit {
       enableReceiptNumbers: [false],
       dateFormat: [null, Validators.required],
       unitCost: [null, Validators.required],
-      pgPort: [null]
+      pgPort: [null],
+      generateAndPrintReceipt: [false]
+    });
+
+    this.form.get('enableReceiptNumbers').valueChanges.subscribe(u => {
+      if (u === false){
+        this.form.get('generateAndPrintReceipt').setValue(false);
+      }
     });
 
     if (this.form.get('requestMasterPassBeforeSavingInAdminMode').value) {
@@ -48,6 +68,47 @@ export class SettingsComponent implements OnInit {
     }
 
     this.getAll();
+  }
+
+  getIDTypes() {
+    this.loading = true;
+    this.settingsService.getIDType().subscribe(
+      result => {
+        this.idTypes =  result.data;
+        this.dataSource = new MatTableDataSource<any>(
+          this.idTypes
+        );
+        this.loading = false;
+      }
+    );
+  }
+
+  editForm(item) {
+    this.idType.patchValue({
+      id: item.id,
+      name: item.name
+    });
+  }
+
+  saveIDTypes() {
+    this.loading = true;
+    this.settingsService.saveIDtype(this.idType.value).subscribe(
+      u => {
+        if (u.result === 100) {
+          this.loading = false;
+          this.idType.reset();
+          this.getIDTypes();
+          this.notify.createNotification('info', 'Success Message', u.message);
+        } else {
+          this.loading = false;
+          this.notify.createNotification('danger', 'Failure Message', u.message);
+        }
+      },
+      err => {
+        this.loading = false;
+        this.notify.createNotification('danger', 'Failure Message', `something went wrong, ${err.statuscode}`);
+      }
+    );
   }
 
   public add(): void {
@@ -93,7 +154,8 @@ export class SettingsComponent implements OnInit {
             enableReceiptNumbers: data.enableReceiptNumbers,
             dateFormat: data.dateFormat,
             unitCost: data.unitCost,
-            pgPort: data.pgPort
+            pgPort: data.pgPort,
+            generateAndPrintReceipt: data.generateAndPrintReceipt
           });
         }
         this.loading = false;

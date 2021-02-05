@@ -10,6 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MomentModule} from 'ngx-moment';
+import {NgxPrintModule} from "ngx-print";
+import {NgxBarcodeModule} from "ngx-barcode";
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import {MomentModule} from 'ngx-moment';
     MatInputModule,
     MatTableModule,
     MatSortModule,
-    MomentModule
+    MomentModule,
+    NgxPrintModule,
+    NgxBarcodeModule
   ]
 })
 export class ReceiptNumberModule { }

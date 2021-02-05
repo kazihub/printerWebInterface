@@ -55,6 +55,24 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-4">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>Use As Input ?</nz-form-label>
+            <nz-switch [(ngModel)]="useAsInput"></nz-switch>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-8">
+        <nz-form-item *ngIf="useAsInput">
+          <nz-form-control>
+            <nz-form-label>Input Label</nz-form-label>
+            <input nz-input [(ngModel)]="inputName" type="text">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-6">
         <nz-form-item>
           <nz-form-control>

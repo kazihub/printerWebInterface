@@ -28,6 +28,8 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
   @Input() posY: number;
   @Input() hasPos = false;
   @Input() mappinType: any;
+  @Input() useAsInput = false;
+  @Input() inputName: any;
   element: any;
   @Input() id = this.appService.uuidv4();
   @Output() elementSelected = new EventEmitter<any>();
@@ -83,7 +85,9 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
       underline: this.underline,
       decorate: this.decorate,
       mappedColumnName: this.mappedColumnName,
-      hasmapping: this.hasmapping
+      hasmapping: this.hasmapping,
+      useAsInput: this.useAsInput,
+      inputName: this.inputName
     });
   }
 
@@ -103,7 +107,9 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
         posY: this.posY,
         posX: this.posX,
         mappedColumnName: this.mappedColumnName,
-        hasmapping: this.hasmapping
+        hasmapping: this.hasmapping,
+        useAsInput: this.useAsInput,
+        inputName: this.inputName
       });
   }
 
@@ -124,7 +130,9 @@ export class TextFieldComponent implements OnInit, AfterViewInit {
       posY: this.posY,
       posX: this.posX,
       mappedColumnName: this.mappedColumnName,
-      hasmapping: this.hasmapping
+      hasmapping: this.hasmapping,
+      useAsInput: this.useAsInput,
+      inputName: this.inputName
     });
   }
 

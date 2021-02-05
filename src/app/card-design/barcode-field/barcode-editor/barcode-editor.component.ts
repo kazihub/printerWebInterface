@@ -16,6 +16,8 @@ export class BarcodeEditorComponent implements OnInit {
   @Input() hasPos = false;
   @Input() hasmapping = false;
   @Input() mappedColumnName: any;
+  @Input() useAsInput = false;
+  @Input() inputName: any;
   @Input() selectedFieldnames: any[];
   @Output() OnSubmit = new EventEmitter<any>();
   @Output() OnEditEnd = new EventEmitter<any>();
@@ -33,7 +35,9 @@ export class BarcodeEditorComponent implements OnInit {
       width: this.width,
       height: this.height,
       mappedColumnName: this.mappedColumnName,
-      hasmapping: this.hasmapping
+      hasmapping: this.hasmapping,
+      useAsInput: this.useAsInput,
+      inputName: this.inputName
     });
   }
 

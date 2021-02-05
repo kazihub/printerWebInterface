@@ -26,6 +26,7 @@ import {HorizontalRulerComponent} from './horizontal-ruler/horizontal-ruler.comp
 import {VerticalRulerComponent} from './vertical-ruler/vertical-ruler.component';
 import {WaitingApprovalComponent} from './waiting-approval/waiting-approval.component';
 import {Router} from '@angular/router';
+import {MatTableDataSource} from "@angular/material/table";
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -49,6 +50,8 @@ export interface Fields {
   mappedColumnName?: string;
   mappinType?: string;
   templateId?: string;
+  useAsInput?: boolean;
+  inputName?: string;
   type?: 'text' | 'image' | 'bg' | 'code';
 }
 
@@ -63,6 +66,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   setupRef: ComponentRef<any>;
   list: Array<Components> = [];
   selected: Array<any> = [];
+  inputFields: Array<any> = [];
   current: any;
   xposition = '0';
   yposition = '0';
@@ -177,6 +181,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   searchForm: FormGroup;
   hideRUlerBtn = false;
+  receiptNumbers: Array<any> = [];
   @ViewChild('textcontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
   @ViewChild('setupcontainer', { read: ViewContainerRef }) setup: ViewContainerRef;
 
@@ -198,6 +203,10 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.getTemp();
+    this.getAll();
+    if (this.baseService.getPermission().useExternalDB) {
+      this.getInputs();
+    }
     if (this.baseService.getUserRole() !== 'System Administrator') {
       this.textControls.forEach(u => u.disabled = true);
       this.mainControls.forEach(u => u.disabled = true);
@@ -275,7 +284,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
 
     const data = {
       receiptNumber: this.receiptNumber,
-      fieldModels: this.dataSource
+      fieldModels: this.dataSource,
+      searchParam: JSON.stringify(this.searchForm.value)
     };
     this.loading = true;
     this.appService.PrintCount(data).subscribe(
@@ -285,6 +295,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           this.printimage = !this.printimage;
           value.click();
           this.selectTemp(this.templatename);
+          this.dataSource = [];
         } else if (u.result === 300) {
           this.loading = false;
           const modal = this.modalService.create({
@@ -307,6 +318,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
               value.click();
               this.baseService.Approval({hasdata: false});
               this.selectTemp(this.templatename);
+              this.dataSource = [];
             } else {
               this.baseService.Approval({hasdata: false});
               this.notify.createNotification('info', 'Card print', 'Card Reprint Not Approved');
@@ -314,8 +326,16 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           });
         } else {
           this.loading = false;
+          this.printimage = !this.printimage;
           this.notify.createNotification('info', 'Card print', u.message);
+          this.selectTemp(this.templatename);
+          this.dataSource = [];
         }
+      },
+      error => {
+        this.printimage = !this.printimage;
+        this.selectTemp(this.templatename);
+        this.dataSource = [];
       }
     );
   }
@@ -335,6 +355,18 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   toggleSearch() {
     this.visible = !this.visible;
     this.baseService.Search(this.visible);
+  }
+
+  getAll() {
+    this.loading = true;
+    this.appService.getReceipt().subscribe(
+      result => {
+        if (result.result === 100) {
+          this.receiptNumbers = result.data;
+        }
+        this.loading = false;
+      }
+    );
   }
 
   createTextField(options?: Fields, hasPos?: boolean) {
@@ -366,6 +398,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       item.meta.hasmapping = u.hasmapping;
       item.meta.mappinType = u.mappinType;
       item.meta.mappedColumnName = u.mappedColumnName;
+      item.meta.useAsInput = u.useAsInput;
+      item.meta.inputName = u.inputName;
     });
     this.componentRef.instance.XYPosition.subscribe(u => {
       const item = this.list.find(x => x.ref === this.currentRef);
@@ -391,6 +425,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       this.componentRef.instance.fontStyle = options.fontStyle;
       this.componentRef.instance.underline = options.underline;
       this.componentRef.instance.decorate = options.decorate;
+      this.componentRef.instance.inputName = options.inputName;
+      this.componentRef.instance.useAsInput = options.useAsInput;
       this.xposition = options.positionX;
       this.yposition = options.positionY;
       this.componentRef.instance.setPosition({x: options.positionX, y: options.positionY });
@@ -417,7 +453,9 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           hasmapping: this.componentRef.instance.hasmapping,
           mappinType: this.componentRef.instance.mappinType,
           mappedColumnName: this.componentRef.instance.mappedColumnName,
-          type: 'text'
+          type: 'text',
+          useAsInput: this.componentRef.instance.useAsInput,
+          inputName: this.componentRef.instance.inputName
         }
       });
     }
@@ -454,6 +492,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       this.componentRef.instance.text = options.text;
       this.componentRef.instance.width = options.width;
       this.componentRef.instance.height = options.height;
+      this.componentRef.instance.inputName = options.inputName;
+      this.componentRef.instance.useAsInput = options.useAsInput;
       this.xposition = options.positionX;
       this.yposition = options.positionY;
       this.componentRef.instance.setPosition({x: options.positionX, y: options.positionY });
@@ -476,7 +516,9 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           templateId: this.templateId,
           hasmapping: this.componentRef.instance.hasmapping,
           mappedColumnName: this.componentRef.instance.mappedColumnName,
-          type: 'code'
+          type: 'code',
+          useAsInput: this.componentRef.instance.useAsInput,
+          inputName: this.componentRef.instance.inputName
         }
       });
     }
@@ -552,6 +594,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.setupRef.instance.decorate = comp.instance.decorate;
     this.setupRef.instance.mappinType = comp.instance.mappinType;
     this.setupRef.instance.hasmapping = comp.instance.hasmapping;
+    this.setupRef.instance.useAsInput = comp.instance.useAsInput;
+    this.setupRef.instance.inputName = comp.instance.inputName;
     if (!comp.instance.mappinType) {
       this.setupRef.instance.mappedColumnName = comp.instance.mappedColumnName;
     } else {
@@ -567,6 +611,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       comp.instance.underline = u.underline;
       comp.instance.hasmapping = u.hasmapping;
       comp.instance.mappinType = u.mappinType;
+      comp.instance.useAsInput = u.useAsInput;
+      comp.instance.inputName = u.inputName;
       comp.instance.mappedColumnName = u.mappedColumnName;
       const item = this.list.find(x => x.ref === this.currentRef);
       item.meta.fontWeight = u.fontWeight;
@@ -578,6 +624,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       item.meta.mappinType = u.mappinType;
       item.meta.mappedColumnName = u.mappedColumnName;
       item.meta.hasmapping = u.hasmapping;
+      item.meta.useAsInput = u.useAsInput;
+      item.meta.inputName = u.inputName;
       this.notify.createMessage('info', 'Applied successfully');
       console.log(this.list);
     });
@@ -606,6 +654,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.setupRef.instance.width = comp.instance.width;
     this.setupRef.instance.height = comp.instance.height;
     this.setupRef.instance.hasmapping = comp.instance.hasmapping;
+    this.setupRef.instance.inputName = comp.instance.inputName;
+    this.setupRef.instance.useAsInput = comp.instance.useAsInput;
     this.setupRef.instance.mappedColumnName = comp.instance.mappedColumnName;
     this.setupRef.instance.OnSubmit.subscribe(u => {
       console.log(u);
@@ -614,12 +664,16 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       comp.instance.height = u.height;
       comp.instance.hasmapping = u.hasmapping;
       comp.instance.mappedColumnName = u.mappedColumnName;
+      comp.instance.inputName = u.inputName;
+      comp.instance.useAsInput = u.useAsInput;
       const item = this.list.find(x => x.ref === this.currentRef);
       item.meta.width = u.width;
       item.meta.height = u.height;
       item.meta.text = u.text;
       item.meta.mappedColumnName = u.mappedColumnName;
       item.meta.hasmapping = u.hasmapping;
+      item.meta.inputName = u.inputName;
+      item.meta.useAsInput = u.useAsInput;
       this.notify.createMessage('info', 'Applied successfully');
     });
     this.setupRef.instance.OnEditEnd.subscribe(u => {
@@ -746,6 +800,17 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       });
   }
 
+  getInputs() {
+    this.loading = true;
+    this.appService.getInput().subscribe(u => {
+      console.log('input', u.data);
+      this.inputFields = u.data[0].data;
+      this.inputFields.forEach(x => {
+        x.value = null;
+      });
+    });
+  }
+
   getTemp() {
     this.loading = true;
     this.appService.get().subscribe(result => {
@@ -775,6 +840,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
                 hasmapping: u.hasmapping,
                 mappinType: u.mappinType,
                 templateId: u.templateId,
+                useAsInput: u.useAsInput,
+                inputName: u.inputName,
                 type: u.type
               }, true);
             } else if (u.type === 'image') {
@@ -799,6 +866,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
                 mappedColumnName: u.mappedColumnName,
                 hasmapping: u.hasmapping,
                 type: u.type,
+                useAsInput: u.useAsInput,
+                inputName: u.inputName,
                 templateId: u.templateId
               }, true);
             }
@@ -898,7 +967,14 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   Apply() {
-    console.log('all list', this.list);
+    if (this.baseService.getPermission().useExternalDB) {
+      this.applyFromInput();
+    } else {
+      this.applyFromDB();
+    }
+  }
+
+  applyFromDB() {
     let item = '';
     this.list.forEach(u => {
       if (u.meta.mappedColumnName) {
@@ -917,6 +993,20 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           u.ref.instance.src = this.dataSource.find(z => z.field === u.meta.mappedColumnName.toUpperCase())?.value;
         } else {
           u.ref.instance.text = this.dataSource.find(z => z.field === u.meta.mappedColumnName.toUpperCase())?.value;
+        }
+      }
+    });
+  }
+
+  applyFromInput() {
+    this.list.forEach(u => {
+      if (u.meta.useAsInput) {
+        if (u.meta.type === 'text') {
+          u.ref.instance.text = this.inputFields.find(x => x.inputName.toUpperCase() === u.meta.inputName.toUpperCase())?.value;
+        } else if (u.meta.type === 'image') {
+          u.ref.instance.src = this.inputFields.find(x => x.inputName.toUpperCase() === u.meta.inputName.toUpperCase())?.value;
+        } else {
+          u.ref.instance.text = this.inputFields.find(x => x.inputName.toUpperCase() === u.meta.inputName.toUpperCase())?.value;
         }
       }
     });

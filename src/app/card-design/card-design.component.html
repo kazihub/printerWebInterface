@@ -123,41 +123,74 @@
       <nz-form-item>
         <nz-form-control>
           <nz-form-label>Receipt Number</nz-form-label>
-          <input nz-input [(ngModel)]="receiptNumber" type="text">
+          <nz-select nzShowSearch nzAllowClear style="width: 100%" [(ngModel)]="receiptNumber">
+            <nz-option *ngFor="let item of receiptNumbers" [nzValue]="item.receiptNumber" [nzLabel]="item.receiptNumber"></nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </div>
-   <form [formGroup]="searchForm">
-     <nz-form-item *ngFor="let item of searchParams">
-       <nz-form-control>
-         <nz-form-label>{{item.param}}</nz-form-label>
-         <input nz-input formControlName="{{item.field}}" type="text">
-       </nz-form-control>
-     </nz-form-item>
-   </form>
-    <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+    <ng-container *ngIf="!baseService.getPermission().useExternalDB">
+      <form [formGroup]="searchForm">
+        <nz-form-item *ngFor="let item of searchParams">
+          <nz-form-control>
+            <nz-form-label>{{item.param}}</nz-form-label>
+            <input nz-input formControlName="{{item.field}}" type="text">
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+      <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+    </ng-container>
     <nz-divider nzType="horizontal"></nz-divider>
     <div class="container-fluid">
-      <div class="row" *ngFor="let item of dataSource">
-        <div class="col-8">
-          <nz-form-item>
-            <nz-form-control>
-              <nz-form-label *ngIf="item.alias">{{item.alias}}</nz-form-label>
-              <nz-form-label *ngIf="!item.alias">{{item.field}}</nz-form-label>
-              <input nz-input [(ngModel)]="item.value" type="text" [readOnly]="!item.readOnly">
-            </nz-form-control>
-          </nz-form-item>
+      <ng-container *ngIf="!baseService.getPermission().useExternalDB">
+        <div class="row" *ngFor="let item of dataSource">
+          <div class="col-8">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-form-label *ngIf="item.alias">{{item.alias}}</nz-form-label>
+                <nz-form-label *ngIf="!item.alias">{{item.field}}</nz-form-label>
+                <input nz-input [(ngModel)]="item.value" type="text" [readOnly]="!item.readOnly">
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col-4">
+            <nz-form-item *ngIf="baseService.getPermission().allowEditableFields">
+              <nz-form-control>
+                <nz-form-label>Allow Edit</nz-form-label>
+                <label nz-checkbox [(ngModel)]="item.readOnly"></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
         </div>
-        <div class="col-4">
-          <nz-form-item *ngIf="baseService.getPermission().allowEditableFields">
-            <nz-form-control>
-              <nz-form-label>Allow Edit</nz-form-label>
-              <label nz-checkbox [(ngModel)]="item.readOnly"></label>
-            </nz-form-control>
-          </nz-form-item>
+      </ng-container>
+      <ng-container *ngIf="baseService.getPermission().useExternalDB">
+        <div class="row" *ngFor="let item of inputFields">
+          <div class="col-12">
+            <ng-container *ngIf="item.mappinType === 'TEXT' || item.mappinType === null">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>{{item.inputName}}</nz-form-label>
+                  <input nz-input [(ngModel)]="item.value" type="text">
+                </nz-form-control>
+              </nz-form-item>
+            </ng-container>
+            <ng-container *ngIf="item.mappinType === 'DATE'">
+              <nz-form-item>
+                <nz-form-control>
+                  <nz-form-label>{{item.inputName}}</nz-form-label>
+                  <input nz-input [(ngModel)]="item.value" type="date">
+                </nz-form-control>
+              </nz-form-item>
+            </ng-container>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
-    <button nz-button nzType="primary" (click)="Apply()" *ngIf="dataSource.length > 0">Apply</button>
+    <ng-container *ngIf="!baseService.getPermission().useExternalDB">
+      <button nz-button nzType="primary" (click)="Apply()" *ngIf="dataSource.length > 0">Apply</button>
+    </ng-container>
+    <ng-container *ngIf="baseService.getPermission().useExternalDB">
+      <button nz-button nzType="primary" (click)="Apply()" *ngIf="inputFields.length > 0">Apply</button>
+    </ng-container>
   </nz-drawer>
 </nz-spin>
