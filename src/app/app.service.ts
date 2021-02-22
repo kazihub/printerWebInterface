@@ -42,11 +42,18 @@ export class AppService {
   }
 
   search(info): any {
-    // return this.httpClient.post(this.baseService.getBaseUrl() + 'App/Search/', info);
-    return forkJoin({
-      search: this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info),
-      selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
-    });
+    // FindPatient
+    if (this.baseService.getPermission().useAccessDB) {
+      return forkJoin({
+        search: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/FindPatient?Id=' + info),
+        selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
+      });
+    } else {
+      return forkJoin({
+        search: this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info),
+        selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
+      });
+    }
   }
 
   getParams(): any {

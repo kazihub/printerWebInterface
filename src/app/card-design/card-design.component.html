@@ -129,20 +129,32 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-    <ng-container *ngIf="!baseService.getPermission().useExternalDB">
-      <form [formGroup]="searchForm">
-        <nz-form-item *ngFor="let item of searchParams">
+    <ng-container *ngIf="!baseService.getPermission().useManualEntries">
+      <ng-container *ngIf="!baseService.getPermission().useAccessDB">
+        <form [formGroup]="searchForm">
+          <nz-form-item *ngFor="let item of searchParams">
+            <nz-form-control>
+              <nz-form-label>{{item.param}}</nz-form-label>
+              <input nz-input formControlName="{{item.field}}" type="text">
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+        <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+      </ng-container>
+      <ng-container *ngIf="baseService.getPermission().useAccessDB">
+        <nz-form-item>
           <nz-form-control>
-            <nz-form-label>{{item.param}}</nz-form-label>
-            <input nz-input formControlName="{{item.field}}" type="text">
+            <nz-form-label>User ID</nz-form-label>
+            <input nz-input [(ngModel)]="userId" type="text">
           </nz-form-control>
         </nz-form-item>
-      </form>
-      <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+        <button nz-button nzType="primary" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+      </ng-container>
+<!--      708/20-->
     </ng-container>
     <nz-divider nzType="horizontal"></nz-divider>
     <div class="container-fluid">
-      <ng-container *ngIf="!baseService.getPermission().useExternalDB">
+      <ng-container *ngIf="!baseService.getPermission().useManualEntries">
         <div class="row" *ngFor="let item of dataSource">
           <div class="col-8">
             <nz-form-item>
@@ -163,7 +175,7 @@
           </div>
         </div>
       </ng-container>
-      <ng-container *ngIf="baseService.getPermission().useExternalDB">
+      <ng-container *ngIf="baseService.getPermission().useManualEntries">
         <div class="row" *ngFor="let item of inputFields">
           <div class="col-12">
             <ng-container *ngIf="item.mappinType === 'TEXT' || item.mappinType === null">
@@ -186,10 +198,10 @@
         </div>
       </ng-container>
     </div>
-    <ng-container *ngIf="!baseService.getPermission().useExternalDB">
+    <ng-container *ngIf="!baseService.getPermission().useManualEntries">
       <button nz-button nzType="primary" (click)="Apply()" *ngIf="dataSource.length > 0">Apply</button>
     </ng-container>
-    <ng-container *ngIf="baseService.getPermission().useExternalDB">
+    <ng-container *ngIf="baseService.getPermission().useManualEntries">
       <button nz-button nzType="primary" (click)="Apply()" *ngIf="inputFields.length > 0">Apply</button>
     </ng-container>
   </nz-drawer>

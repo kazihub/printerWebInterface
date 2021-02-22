@@ -37,7 +37,7 @@ export class SettingsComponent implements OnInit {
       name: [null, Validators.required]
     });
     this.form = this.fb.group({
-      useExternalDB: [true],
+      useManualEntries: [true],
       facilityCode: [null, Validators.required],
       facilityName: [null, Validators.required],
       allowEditableFields: [false],
@@ -51,7 +51,14 @@ export class SettingsComponent implements OnInit {
       dateFormat: [null, Validators.required],
       unitCost: [null, Validators.required],
       pgPort: [null],
-      generateAndPrintReceipt: [false]
+      generateAndPrintReceipt: [false],
+      useAccessDB: [false]
+    });
+
+    this.form.get('useManualEntries').valueChanges.subscribe(u => {
+      if (u === true){
+        this.form.get('useAccessDB').setValue(false);
+      }
     });
 
     this.form.get('enableReceiptNumbers').valueChanges.subscribe(u => {
@@ -141,7 +148,7 @@ export class SettingsComponent implements OnInit {
         if (result.result === 100) {
           const data = result.data;
           this.form.patchValue({
-            useExternalDB: data.useExternalDB,
+            useManualEntries: data.useManualEntries,
             facilityCode: data.facilityCode,
             facilityName: data.facilityName,
             allowEditableFields: data.allowEditableFields,
@@ -155,7 +162,8 @@ export class SettingsComponent implements OnInit {
             dateFormat: data.dateFormat,
             unitCost: data.unitCost,
             pgPort: data.pgPort,
-            generateAndPrintReceipt: data.generateAndPrintReceipt
+            generateAndPrintReceipt: data.generateAndPrintReceipt,
+            useAccessDB: data.useAccessDB
           });
         }
         this.loading = false;

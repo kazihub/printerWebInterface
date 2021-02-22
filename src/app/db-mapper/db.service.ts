@@ -29,16 +29,16 @@ export class DbService {
   }
 
   getOnlyFields(): any {
-    return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
+    if (this.baseService.getPermission().useAccessDB) {
+      return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetAccessDBTableSchema`);
+    } else {
+      return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
+    }
   }
 
   getFields(info): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetFields/${info}`);
   }
-
-  // saveQuery(info): any {
-  //   return this.httpClient.post(`${this.baseService.getBaseUrl()}Db/SaveQuery`, info);
-  // }
 
   SaveQueryGenerated(info): any {
     return this.httpClient.post(`${this.baseService.getBaseUrl()}Db/SaveQueryGenerated`, info);

@@ -26,7 +26,6 @@ import {HorizontalRulerComponent} from './horizontal-ruler/horizontal-ruler.comp
 import {VerticalRulerComponent} from './vertical-ruler/vertical-ruler.component';
 import {WaitingApprovalComponent} from './waiting-approval/waiting-approval.component';
 import {Router} from '@angular/router';
-import {MatTableDataSource} from "@angular/material/table";
 
 export interface Components{
   ref?: ComponentRef<any>;
@@ -68,6 +67,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   selected: Array<any> = [];
   inputFields: Array<any> = [];
   current: any;
+  userId: any;
+  DataApplied = false;
   xposition = '0';
   yposition = '0';
   printimage: any;
@@ -175,7 +176,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       hasIcon: true,
       handle: () => this.saveTemp(),
       disabled: false,
-      tooltip: 'save cureent changes'
+      tooltip: 'save current changes'
     }
   ];
 
@@ -204,7 +205,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.getTemp();
     this.getAll();
-    if (this.baseService.getPermission().useExternalDB) {
+    if (this.baseService.getPermission().useManualEntries) {
       this.getInputs();
     }
     if (this.baseService.getUserRole() !== 'System Administrator') {
@@ -273,8 +274,11 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   print(value) {
-    console.log(this.dataSource);
-    console.log(this.searchForm.value);
+    if (!this.DataApplied) {
+      this.notify.createNotification('info', 'Card Print', `You can't print a blank card, please apply user info before printing.`);
+      this.printimage = !this.printimage;
+      return;
+    }
     if (this.baseService.getPermission().enableReceiptNumbers) {
       if (!this.receiptNumber) {
         this.notify.createNotification('info', 'Card Print', 'Enter receipt number to print');
@@ -290,12 +294,16 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.appService.PrintCount(data).subscribe(
       u => {
+        this.DataApplied = false;
         if (u.result === 100) {
           this.loading = false;
           this.printimage = !this.printimage;
           value.click();
           this.selectTemp(this.templatename);
           this.dataSource = [];
+          this.inputFields.forEach(m => {
+            m.value = null;
+          });
         } else if (u.result === 300) {
           this.loading = false;
           const modal = this.modalService.create({
@@ -783,7 +791,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
       find.src = this.bgimage;
     }
 
-    console.log(data);
+    console.log('er', data);
     this.loading = true;
     this.appService.SaveTemplateFields(data).subscribe(result => {
         if (result.result === 100) {
@@ -854,6 +862,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
                 templateId: u.templateId,
                 mappedColumnName: u.mappedColumnName,
                 hasmapping: u.hasmapping,
+                useAsInput: u.useAsInput,
+                inputName: u.inputName,
                 type: u.type
               }, true);
             } else if (u.type === 'code') {
@@ -898,34 +908,55 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   searchQueryParams() {
-    const param = [];
+    let param: any = [];
     this.dataSource = [];
-    this.searchParams.forEach(u => {
-      param.push({
-        field: {
-          field: u.field,
-          param: u.param
-        },
-        value: this.searchForm.get(u.field).value
+    if (!this.baseService.getPermission().useAccessDB) {
+      this.searchParams.forEach(u => {
+        param.push({
+          field: {
+            field: u.field,
+            param: u.param
+          },
+          value: this.searchForm.get(u.field).value
+        });
       });
-    });
+    } else {
+      param = null;
+      param = this.userId;
+    }
 
     this.appService.search(param).subscribe(
       u => {
         this.DataTable = u.search.data;
         const selected = u.selectedFields.data;
         console.log('sel', this.selected);
-        const data = Object.keys(this.DataTable[0]);
+        let data = null;
+        if (!this.baseService.getPermission().useAccessDB) {
+          data = Object.keys(this.DataTable[0]);
+        } else {
+          data = Object.keys(this.DataTable);
+        }
         console.log(data);
-        data.forEach((x, i) => {
-          this.dataSource.push({
-            field: x.toUpperCase(),
-            value: this.DataTable[0][Object.keys(this.DataTable[0])[i]],
-            readOnly: false,
-            alias: selected.find(s => s.columnName.toUpperCase() === x.toUpperCase())?.alias
+        if (!this.baseService.getPermission().useAccessDB) {
+          data.forEach((x, i) => {
+            this.dataSource.push({
+              field: x.toUpperCase(),
+              value: this.DataTable[0][Object.keys(this.DataTable[0])[i]],
+              readOnly: false,
+              alias: selected.find(s => s.columnName.toUpperCase() === x.toUpperCase())?.alias
+            });
           });
-        });
-        console.log(this.dataSource);
+        } else {
+          data.forEach((x, i) => {
+            this.dataSource.push({
+              field: x.toUpperCase(),
+              value: this.DataTable[Object.keys(this.DataTable)[i]],
+              readOnly: false,
+              alias: selected.find(s => s.columnName.toUpperCase() === x.toUpperCase())?.alias
+            });
+          });
+        }
+        console.log('hhj', this.DataTable, this.dataSource);
         this.loading = false;
       }
     );
@@ -967,7 +998,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   }
 
   Apply() {
-    if (this.baseService.getPermission().useExternalDB) {
+    this.DataApplied = true;
+    if (this.baseService.getPermission().useManualEntries) {
       this.applyFromInput();
     } else {
       this.applyFromDB();
@@ -1051,6 +1083,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           hasmapping: u.hasmapping,
           mappinType: u.mappinType,
           templateId: u.templateId,
+          useAsInput: u.useAsInput,
+          inputName: u.inputName,
           type: u.type
         }, true);
       } else if (u.type === 'image') {
@@ -1064,6 +1098,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           mappedColumnName: u.mappedColumnName,
           hasmapping: u.hasmapping,
           mappinType: u.mappinType,
+          useAsInput: u.useAsInput,
+          inputName: u.inputName,
           type: u.type
         }, true);
       } else if (u.type === 'code') {
@@ -1077,6 +1113,8 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
           templateId: u.templateId,
           hasmapping: u.hasmapping,
           mappinType: u.mappinType,
+          useAsInput: u.useAsInput,
+          inputName: u.inputName,
           type: u.type
         }, true);
       }

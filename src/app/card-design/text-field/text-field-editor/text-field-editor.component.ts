@@ -1,7 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
-import {NzModalRef} from 'ng-zorro-antd';
 import {DbService} from '../../../db-mapper/db.service';
-import {NotifyService} from '../../../notify.service';
 
 @Component({
   selector: 'app-text-field-editor',
