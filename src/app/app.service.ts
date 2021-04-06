@@ -6,7 +6,7 @@ import {forkJoin} from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class AppService {
+export class  AppService {
 
   constructor(
     private httpClient: HttpClient,
