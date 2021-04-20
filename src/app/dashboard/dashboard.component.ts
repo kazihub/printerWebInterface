@@ -14,11 +14,14 @@ export class DashboardComponent implements OnInit {
   monthYear: any;
   total = '0';
   today = '0';
+  dateRange = null;
+  rangeloading = false;
   reprintTotal = '0';
   reprintToday = '0';
   monthlyReprints = '0';
   monthlyPrints = '0';
   WeekNumber: any;
+  generalTotal = '0';
   date = new Date();
   todayDate = new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate());
   currentWeek: any;
@@ -155,10 +158,10 @@ export class DashboardComponent implements OnInit {
             this.total = `${parseFloat(this.total) + parseFloat(x.count)}`;
             dates.push(new Date(x.date));
           });
-          this.today = u.data.today?.count;
+          this.today = u.data.today;
           this.reprintTotal = u.data.reprintsCount.length;
           this.reprintToday = u.data.todayReprints.length;
-          this.monthlyPrints = u.data.monthlyPrints.length;
+          this.monthlyPrints = u.data.monthlyPrints;
           this.monthlyReprints = u.data.monthlyReprints.length;
           this.doughnutChartData.push(parseFloat(this.total));
           this.doughnutChartData.push(parseFloat(this.reprintTotal));
@@ -221,6 +224,19 @@ export class DashboardComponent implements OnInit {
 
   GetMonth(date: Date): any {
     return this.AllMonths[date.getMonth()];
+  }
+
+  onChange(result: Date[]): void {
+    const data = {
+      startDate: result[0],
+      endDate: result[1]
+    };
+
+    this.rangeloading = true;
+    this.appService.getRangeTotalPrinted(data).subscribe(u => {
+      this.rangeloading = false;
+      this.generalTotal = u.data;
+    });
   }
 
   GetDay(date: Date): any {

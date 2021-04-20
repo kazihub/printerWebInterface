@@ -16,11 +16,22 @@
 </nz-card>
 <nz-card>
   <nz-row [nzGutter]="16">
-    <nz-col [nzSpan]="12">
+    <nz-col [nzSpan]="6">
       <nz-statistic [nzValue]="(monthlyPrints | number)! ? monthlyPrints : 0" [nzTitle]="'Total Cards Printed this Month'"></nz-statistic>
     </nz-col>
-    <nz-col [nzSpan]="12">
+    <nz-col [nzSpan]="6">
       <nz-statistic [nzValue]="((monthlyReprints | number)!) ? monthlyReprints : 0" [nzTitle]="'Total Cards RePrinted This Month'"></nz-statistic>
+    </nz-col>
+    <nz-col [nzSpan]="12">
+      <nz-spin [nzSpinning]="rangeloading">
+        <nz-form-item>
+          <nz-form-control>
+            <nz-form-label>Get Total Cards Printed By Date Range</nz-form-label>
+            <nz-range-picker style="width: 100%" [(ngModel)]="date" (ngModelChange)="onChange($event)"></nz-range-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-statistic [nzValue]="((generalTotal | number)!) ? generalTotal : 0"></nz-statistic>
+      </nz-spin>
     </nz-col>
   </nz-row>
 </nz-card>

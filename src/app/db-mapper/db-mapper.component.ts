@@ -74,6 +74,10 @@ export class DbMapperComponent implements OnInit {
     {
       id: 1,
       name: 'POSTGRES SQL'
+    },
+    {
+      id: 2,
+      name: 'MYSQL'
     }
   ];
   @Input() tablename: any;

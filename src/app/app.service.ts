@@ -64,6 +64,10 @@ export class  AppService {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}App/TotalPrinted`);
   }
 
+  getRangeTotalPrinted(info): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/GetCardCount`, info);
+  }
+
   getActiveTaxes(): any {
     return this.httpClient.get(`${this.baseService.getBaseUrl()}Account/GetActiveTax`);
   }
