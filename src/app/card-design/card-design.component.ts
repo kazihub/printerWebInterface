@@ -910,7 +910,7 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
   searchQueryParams() {
     let param: any = [];
     this.dataSource = [];
-    if (!this.baseService.getPermission().useAccessDB) {
+    if (!this.baseService.getPermission().useAccessDB && !this.baseService.getPermission().allowApiAccess) {
       this.searchParams.forEach(u => {
         param.push({
           field: {
@@ -931,13 +931,13 @@ export class CardDesignComponent implements OnInit, AfterViewInit {
         const selected = u.selectedFields.data;
         console.log('sel', this.selected);
         let data = null;
-        if (!this.baseService.getPermission().useAccessDB) {
+        if (!this.baseService.getPermission().useAccessDB && !this.baseService.getPermission().allowApiAccess) {
           data = Object.keys(this.DataTable[0]);
         } else {
           data = Object.keys(this.DataTable);
         }
         console.log(data);
-        if (!this.baseService.getPermission().useAccessDB) {
+        if (!this.baseService.getPermission().useAccessDB && !this.baseService.getPermission().allowApiAccess) {
           data.forEach((x, i) => {
             this.dataSource.push({
               field: x.toUpperCase(),

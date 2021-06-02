@@ -13,12 +13,20 @@
                 <label nz-checkbox formControlName="useManualEntries"></label>
               </nz-form-control>
             </nz-form-item>
-            <nz-form-item *ngIf="!form.get('useManualEntries').value">
-              <nz-form-control>
-                <nz-form-label>Use Access Database ?</nz-form-label>
-                <label nz-checkbox formControlName="useAccessDB"></label>
-              </nz-form-control>
-            </nz-form-item>
+            <ng-container *ngIf="!form.get('useManualEntries').value">
+              <nz-form-item *ngIf="!form.get('allowApiAccess').value">
+                <nz-form-control>
+                  <nz-form-label>Use Access Database ?</nz-form-label>
+                  <label nz-checkbox formControlName="useAccessDB"></label>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item *ngIf="!form.get('useAccessDB').value">
+                <nz-form-control>
+                  <nz-form-label>Allow API Access ?</nz-form-label>
+                  <label nz-checkbox formControlName="allowApiAccess"></label>
+                </nz-form-control>
+              </nz-form-item>
+            </ng-container>
             <nz-form-item>
               <nz-form-control>
                 <nz-form-label>Enable Receipt Numbers</nz-form-label>

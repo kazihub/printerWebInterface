@@ -48,6 +48,11 @@ export class  AppService {
         search: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/FindPatient?Id=' + info),
         selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
       });
+    } else if (this.baseService.getPermission().allowApiAccess) {
+      return forkJoin({
+        search: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/ApiFindPatient?Id=' + info),
+        selectedFields: this.httpClient.get(this.baseService.getBaseUrl() + 'Db/getOnlyFields/')
+      });
     } else {
       return forkJoin({
         search: this.httpClient.post(this.baseService.getBaseUrl() + 'App/RunQuery/', info),

@@ -131,17 +131,19 @@
     </div>
     <ng-container *ngIf="!baseService.getPermission().useManualEntries">
       <ng-container *ngIf="!baseService.getPermission().useAccessDB">
-        <form [formGroup]="searchForm">
-          <nz-form-item *ngFor="let item of searchParams">
-            <nz-form-control>
-              <nz-form-label>{{item.param}}</nz-form-label>
-              <input nz-input formControlName="{{item.field}}" type="text">
-            </nz-form-control>
-          </nz-form-item>
-        </form>
-        <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+        <ng-container *ngIf="!baseService.getPermission().allowApiAccess">
+          <form [formGroup]="searchForm">
+            <nz-form-item *ngFor="let item of searchParams">
+              <nz-form-control>
+                <nz-form-label>{{item.param}}</nz-form-label>
+                <input nz-input formControlName="{{item.field}}" type="text">
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+          <button nz-button nzType="primary" [disabled]="searchForm.invalid" (click)="searchQueryParams()" nzSearch><i nz-icon nzType="search"></i> Search</button>
+        </ng-container>
       </ng-container>
-      <ng-container *ngIf="baseService.getPermission().useAccessDB">
+      <ng-container *ngIf="baseService.getPermission().useAccessDB || baseService.getPermission().allowApiAccess">
         <nz-form-item>
           <nz-form-control>
             <nz-form-label>User ID</nz-form-label>

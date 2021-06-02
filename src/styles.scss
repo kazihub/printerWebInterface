@@ -22,6 +22,10 @@ mwlResizable{
 //  border: dotted #3e3e3e 2px;
 //}
 
+input, label {
+  outline: solid 1px black !important;
+}
+
 .example-handle {
   position: absolute;
   top: -5px;

@@ -52,7 +52,8 @@ export class SettingsComponent implements OnInit {
       unitCost: [null, Validators.required],
       pgPort: [null],
       generateAndPrintReceipt: [false],
-      useAccessDB: [false]
+      useAccessDB: [false],
+      allowApiAccess: [false]
     });
 
     this.form.get('useManualEntries').valueChanges.subscribe(u => {
@@ -163,7 +164,8 @@ export class SettingsComponent implements OnInit {
             unitCost: data.unitCost,
             pgPort: data.pgPort,
             generateAndPrintReceipt: data.generateAndPrintReceipt,
-            useAccessDB: data.useAccessDB
+            useAccessDB: data.useAccessDB,
+            allowApiAccess: data.allowApiAccess
           });
         }
         this.loading = false;
