@@ -9,16 +9,19 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
-import { CardReportComponent } from './card-report/card-report.component';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { CardReprintComponent } from './card-reprint/card-reprint.component';
 import { MomentModule } from 'ngx-moment';
+import { DailyDetailPrintCountComponent } from './daily-detail-print-count/daily-detail-print-count.component';
+import { DailySummaryPrintCountComponent } from './daily-summary-print-count/daily-summary-print-count.component';
+import { CashierReceiptReportComponent } from './cashier-receipt-report/cashier-receipt-report.component';
+import { CashReceiptSummaryReportComponent } from './cash-receipt-summary-report/cash-receipt-summary-report.component';
+import {ExportAsModule} from 'ngx-export-as';
 
 
 @NgModule({
-  declarations: [ReportsComponent, CardReportComponent, CardReprintComponent],
+  declarations: [ReportsComponent, DailyDetailPrintCountComponent, DailySummaryPrintCountComponent, CashierReceiptReportComponent, CashReceiptSummaryReportComponent],
   imports: [
     CommonModule,
     ReportsRoutingModule,
@@ -31,7 +34,8 @@ import { MomentModule } from 'ngx-moment';
     MatFormFieldModule,
     MatInputModule,
     MatTableExporterModule,
-    MomentModule
+    MomentModule,
+    ExportAsModule,
   ]
 })
 export class ReportsModule { }

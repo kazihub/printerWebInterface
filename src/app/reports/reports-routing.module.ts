@@ -1,10 +1,11 @@
-import { CardReprintComponent } from './card-reprint/card-reprint.component';
-import { RouteGuard } from './../utilities/route-guard.service';
+import { RouteGuard } from '../utilities/route-guard.service';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
 import { ReportsComponent } from './reports.component';
-import { CardReportComponent } from './card-report/card-report.component';
+import {DailyDetailPrintCountComponent} from './daily-detail-print-count/daily-detail-print-count.component';
+import {DailySummaryPrintCountComponent} from './daily-summary-print-count/daily-summary-print-count.component';
+import {CashierReceiptReportComponent} from "./cashier-receipt-report/cashier-receipt-report.component";
+import {CashReceiptSummaryReportComponent} from "./cash-receipt-summary-report/cash-receipt-summary-report.component";
 
 const routes: Routes = [
   {
@@ -19,16 +20,34 @@ const routes: Routes = [
   {
     path: 'card-print-reports',
     canActivate: [RouteGuard],
-    component: CardReportComponent,
+    component: DailyDetailPrintCountComponent,
     data: {
       title: 'user accounts',
       headerDisplay: 'none'
     }
   },
   {
-    path: 'card-reprint-reports/:id',
+    path: 'card-summary-print-report',
     canActivate: [RouteGuard],
-    component: CardReprintComponent,
+    component: DailySummaryPrintCountComponent,
+    data: {
+      title: 'user accounts',
+      headerDisplay: 'none'
+    }
+  },
+  {
+    path: 'cash-receipt-report',
+    canActivate: [RouteGuard],
+    component: CashierReceiptReportComponent,
+    data: {
+      title: 'user accounts',
+      headerDisplay: 'none'
+    }
+  },
+  {
+    path: 'cash-receipt-summary-report',
+    canActivate: [RouteGuard],
+    component: CashReceiptSummaryReportComponent,
     data: {
       title: 'user accounts',
       headerDisplay: 'none'

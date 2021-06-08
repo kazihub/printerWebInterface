@@ -27,4 +27,17 @@ export class ReportService {
   getReprintPrintsByDate(id, data): any {
     return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/GetCardAllRePrint/${id}`, data);
   }
+
+  getCardPrintByDate(data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/GetCardPrintByDate`, data);
+  }
+  getCardSummaryPrintByDate(data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/DailySummary`, data);
+  }
+  getCashReceiptReport(data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/CashReceiptReport`, data);
+  }
+  getCashReceiptSummaryReport(data): any {
+    return this.httpClient.post(`${this.baseService.getBaseUrl()}Cards/CashReceiptSummaryReport`, data);
+  }
 }

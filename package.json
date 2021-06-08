@@ -43,6 +43,7 @@
     "ng-zorro-antd": "^9.0.2",
     "ngx-barcode": "^0.3.0",
     "ngx-barcode6": "^1.0.10",
+    "ngx-export-as": "^1.12.0",
     "ngx-highlightjs": "^2.1.1",
     "ngx-infinite-scroll": "^6.0.1",
     "ngx-moment": "^4.0.1",

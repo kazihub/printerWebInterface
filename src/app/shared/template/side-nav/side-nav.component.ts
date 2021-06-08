@@ -72,7 +72,31 @@ export class SideNavComponent implements OnInit{
       submenu: [
         {
           path: '/reports/card-print-reports',
-          title: 'Card Print Reports',
+          title: 'Daily Detail Print Reports',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'idcard',
+          submenu: []
+        },
+        {
+          path: '/reports/card-summary-print-report',
+          title: 'Daily Summary Print Reports',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'idcard',
+          submenu: []
+        },
+        {
+          path: '/reports/cash-receipt-report',
+          title: 'Receipt Reports',
+          iconType: 'nzIcon',
+          iconTheme: 'outline',
+          icon: 'idcard',
+          submenu: []
+        },
+        {
+          path: '/reports/cash-receipt-summary-report',
+          title: 'Receipt Summary Reports',
           iconType: 'nzIcon',
           iconTheme: 'outline',
           icon: 'idcard',
