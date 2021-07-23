@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ReportService} from '../report.service';
 import {UserAccountService} from '../../user-accounts/user-account.service';
 import {BaseService} from '../../utilities/base.service';
-import {ExportAsConfig, ExportAsService} from "ngx-export-as";
+import {ExportAsConfig, ExportAsService} from 'ngx-export-as';
 
 @Component({
   selector: 'app-daily-summary-print-count',
@@ -109,5 +109,9 @@ export class DailySummaryPrintCountComponent implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  addItem(item1, item2) {
+    return parseFloat(item1) + parseFloat(item2);
   }
 }

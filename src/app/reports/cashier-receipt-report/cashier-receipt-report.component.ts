@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {ReportService} from "../report.service";
-import {UserAccountService} from "../../user-accounts/user-account.service";
-import {BaseService} from "../../utilities/base.service";
-import {ExportAsConfig, ExportAsService} from "ngx-export-as";
+import {ReportService} from '../report.service';
+import {UserAccountService} from '../../user-accounts/user-account.service';
+import {BaseService} from '../../utilities/base.service';
+import {ExportAsConfig, ExportAsService} from 'ngx-export-as';
 
 @Component({
   selector: 'app-cashier-receipt-report',

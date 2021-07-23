@@ -32,7 +32,11 @@ export class DbService {
     if (this.baseService.getPermission().useAccessDB) {
       return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetAccessDBTableSchema`);
     } else {
-      return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
+      if (this.baseService.getPermission().allowApiAccess) {
+        return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/GetApiTableSchema`);
+      } else {
+        return this.httpClient.get(`${this.baseService.getBaseUrl()}Db/getOnlyFields`);
+      }
     }
   }
 

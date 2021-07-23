@@ -4,8 +4,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { ReportsComponent } from './reports.component';
 import {DailyDetailPrintCountComponent} from './daily-detail-print-count/daily-detail-print-count.component';
 import {DailySummaryPrintCountComponent} from './daily-summary-print-count/daily-summary-print-count.component';
-import {CashierReceiptReportComponent} from "./cashier-receipt-report/cashier-receipt-report.component";
-import {CashReceiptSummaryReportComponent} from "./cash-receipt-summary-report/cash-receipt-summary-report.component";
+import {CashierReceiptReportComponent} from './cashier-receipt-report/cashier-receipt-report.component';
+import {CashReceiptSummaryReportComponent} from './cash-receipt-summary-report/cash-receipt-summary-report.component';
 
 const routes: Routes = [
   {

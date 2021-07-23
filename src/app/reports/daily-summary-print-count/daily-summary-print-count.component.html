@@ -55,6 +55,7 @@
         <th>DATE</th>
         <th>NEW PRINT</th>
         <th>RE PRINT</th>
+        <th>TOTAL PRINT</th>
       </tr>
       </thead>
       <tbody>
@@ -75,6 +76,9 @@
           <td>
             {{data.rePrint}}
           </td>
+          <td>
+            {{addItem(data.newPrint, data.rePrint)}}
+          </td>
         </tr>
       </ng-container>
       </tbody>
@@ -84,7 +88,7 @@
         <th></th>
         <th>TOTAL RE PRINTS: {{maindata.rePrint}}</th>
         <th></th>
-        <th>GRAND TOTAL: {{maindata.total}}</th>
+        <th colspan="2">GRAND TOTAL: {{maindata.total}}</th>
       </tr>
       </tfoot>
     </nz-table>

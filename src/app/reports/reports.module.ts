@@ -21,7 +21,11 @@ import {ExportAsModule} from 'ngx-export-as';
 
 
 @NgModule({
-  declarations: [ReportsComponent, DailyDetailPrintCountComponent, DailySummaryPrintCountComponent, CashierReceiptReportComponent, CashReceiptSummaryReportComponent],
+  declarations: [ReportsComponent,
+    DailyDetailPrintCountComponent,
+    DailySummaryPrintCountComponent,
+    CashierReceiptReportComponent,
+    CashReceiptSummaryReportComponent],
   imports: [
     CommonModule,
     ReportsRoutingModule,
